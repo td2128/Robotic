@@ -33,15 +33,15 @@ classdef robotic_function
             elseif status == 0
                 id15 = 137/0.088;
             end
-            write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK_deg(1));
+            write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_deg(1));
             pause(2)
-            write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK_deg(2));
+            write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_deg(2));
             pause(2)
-            write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK_deg(3));
+            write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_deg(3));
             pause(2)
-            write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_deg(4));
+            write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_deg(4));
             pause(5)
-            write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, id15);
+            write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, id15);
             pause(2)
             cube = 0;
         end
@@ -49,16 +49,15 @@ classdef robotic_function
         % status = 1, front; status = 2, down; status = 3, toward;
         function cube = robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos_coordinate, status)
              [IK_deg, IK_mid_deg] = robot_function.robot_pick_angle(pos_coordinate,-90,3);
+             [IK_deg1, IK_mid_deg1] = robot_function.robot_pick_angle(pos_coordinate,0,3);
              cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
              pause(3)
              cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
              if (status == 1) % front
-                 [IK_deg1, IK_mid_deg1] = robot_function.robot_pick_angle(pos_coordinate,0,3);
                  cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
                  pause(3)
                  cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
              elseif (status == 2) %down
-                 [IK_deg1, IK_mid_deg1] = robot_function.robot_pick_angle(pos_coordinate,0,3);
                  cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
                  pause(3)
                  cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
@@ -71,7 +70,6 @@ classdef robotic_function
                  pause(3)
                  cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
              elseif (status == 3) %toward
-                 [IK_deg1, IK_mid_deg1] = robot_function.robot_pick_angle(pos_coordinate,0,3);
                  cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
                  pause(3)
                  cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
@@ -97,49 +95,49 @@ classdef robotic_function
         end
 
         function ENABLE = torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE, ENABLE)
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_TORQUE_ENABLE, ENABLE);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_TORQUE_ENABLE, ENABLE);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_TORQUE_ENABLE, ENABLE);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_TORQUE_ENABLE, ENABLE);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_TORQUE_ENABLE, ENABLE);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_TORQUE_ENABLE, ENABLE);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_TORQUE_ENABLE, ENABLE);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_TORQUE_ENABLE, ENABLE);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_TORQUE_ENABLE, ENABLE);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_TORQUE_ENABLE, ENABLE);
         end
 
         function MAX_POS_id0 = max_pos_limit(port_num,PROTOCOL_VERSION,ADDR_MAX_POS,MAX_POS_id0)
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID11,ADDR_MAX_POS,MAX_POS_id0);
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID12,ADDR_MAX_POS,MAX_POS_id0);
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID13,ADDR_MAX_POS,MAX_POS_id0);
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID14,ADDR_MAX_POS,MAX_POS_id0);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,11,ADDR_MAX_POS,MAX_POS_id0);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,12,ADDR_MAX_POS,MAX_POS_id0);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,13,ADDR_MAX_POS,MAX_POS_id0);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,14,ADDR_MAX_POS,MAX_POS_id0);
         end
 
         function MIN_POS_id0 = min_pos_limit(port_num,PROTOCOL_VERSION,ADDR_MIN_POS,MIN_POS_id0)
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID11,ADDR_MIN_POS,MIN_POS_id0);
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID12,ADDR_MIN_POS,MIN_POS_id0);
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID13,ADDR_MIN_POS,MIN_POS_id0);
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID14,ADDR_MIN_POS,MIN_POS_id0);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,11,ADDR_MIN_POS,MIN_POS_id0);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,12,ADDR_MIN_POS,MIN_POS_id0);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,13,ADDR_MIN_POS,MIN_POS_id0);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,14,ADDR_MIN_POS,MIN_POS_id0);
         end
 
-        function mode = operating_mode(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_OPERATING_MODE, mode)
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_OPERATING_MODE, mode);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_OPERATING_MODE, mode);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_OPERATING_MODE, mode);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_OPERATING_MODE, mode);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_OPERATING_MODE, mode);
+        function mode = operating_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_OPERATING_MODE, mode)
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_OPERATING_MODE, mode);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_OPERATING_MODE, mode);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_OPERATING_MODE, mode);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_OPERATING_MODE, mode);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_OPERATING_MODE, mode);
         end
 
-        function mode = drive_mode(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_DRIVE_MODE, mode)
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_DRIVE_MODE, mode);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_DRIVE_MODE, mode);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_DRIVE_MODE, mode);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_DRIVE_MODE, mode);
-            write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_DRIVE_MODE, mode);
+        function mode = drive_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_DRIVE_MODE, mode)
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_DRIVE_MODE, mode);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_DRIVE_MODE, mode);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_DRIVE_MODE, mode);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_DRIVE_MODE, mode);
+            write1ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_DRIVE_MODE, mode);
         end
 
-        function speed = profile_velocity(port_num,PROTOCOL_VERSION,DXL_ID11,ADDR_PRO_PROFILE_VELOCITY,speed,speed_grab)
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID11,ADDR_PRO_PROFILE_VELOCITY,speed);
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID12,ADDR_PRO_PROFILE_VELOCITY,speed);
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID13,ADDR_PRO_PROFILE_VELOCITY,speed);
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID14,ADDR_PRO_PROFILE_VELOCITY,speed);
-            write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID15,ADDR_PRO_PROFILE_VELOCITY,speed_grab);
+        function speed = profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,speed,speed_grab)
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,11,ADDR_PRO_PROFILE_VELOCITY,speed);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,12,ADDR_PRO_PROFILE_VELOCITY,speed);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,13,ADDR_PRO_PROFILE_VELOCITY,speed);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,14,ADDR_PRO_PROFILE_VELOCITY,speed);
+            write4ByteTxRx(port_num,PROTOCOL_VERSION,15,ADDR_PRO_PROFILE_VELOCITY,speed_grab);
         end
 
         function traj = trajectory(theta, tf)
@@ -151,15 +149,15 @@ classdef robotic_function
             traj = a0 + a1 .* t + a2 .* t.^2 + a3 .* t.^3;
         end
 
-        function traj = robot_traj(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, theta1_traj,theta2_traj,theta3_traj,theta4_traj)
+        function traj = robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_traj,theta2_traj,theta3_traj,theta4_traj)
             for i = 1:1:length(theta1_traj)
-                write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, theta1_traj(i));
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, theta1_traj(i));
                 pause(2)
-                write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, theta2_traj(i));
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, theta2_traj(i));
                 pause(2)
-                write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, theta3_traj(i));
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, theta3_traj(i));
                 pause(2)
-                write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, theta4_traj(i));
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, theta4_traj(i));
                 pause(3)
                 traj = 0;
             end

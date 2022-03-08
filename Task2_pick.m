@@ -45,7 +45,7 @@ DXL_ID13                     = 13;
 DXL_ID14                     = 14;
 DXL_ID15                     = 15;
 BAUDRATE                    = 1000000;
-DEVICENAME                  = 'COM4';       % Check which port is being used on your controller
+DEVICENAME                  = 'COM5';       % Check which port is being used on your controller
                                             % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
 DEFAULT_POS = [2048,2048,2048,2048];                                            
 TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -112,14 +112,14 @@ max = robotic_function.max_pos_limit(port_num,PROTOCOL_VERSION,ADDR_MAX_POS,MAX_
 % Set min pos limit
 MIN = robotic_function.min_pos_limit(port_num,PROTOCOL_VERSION,ADDR_MIN_POS,MIN_POS_id0);
 % Put actuator into Position Control Mode
-mode = robotic_function.operating_mode(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_OPERATING_MODE, 3);
+mode = robotic_function.operating_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_OPERATING_MODE, 3);
 %Enable Torque
 torque_disbale = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,0);
 % Drive mode
-mode = robotic_function.drive_mode(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_DRIVE_MODE,4);
+mode = robotic_function.drive_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_DRIVE_MODE,4);
 pause(0.5)
 % set Profile Velocity
-speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,DXL_ID11,ADDR_PRO_PROFILE_VELOCITY,4000,3000);
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,4000,3000);
 %Enable Torque
 torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,1);
 
@@ -141,6 +141,7 @@ end
 %pos_1 = input('Please input desired [] position /n');
 %pos_2 = input('Please input final [] position');
 %first cube pos
+%% Need to measure location again, it is off
 pos1 = [-5.1,20.2,6.2];
 pos2 = [-9.9,10.3,6];
 %second cube pos
@@ -150,22 +151,17 @@ pos4 = [-10,0,6.2];
 pos5 = [0,10,5.6];
 pos6 = [-4,-5,11];%mid point so won't touch ground
 pos7 = [-15.3,-15.3,8];
-%% 
+%% Pick up all cubes and place them
 %First cube
-IK1_start_deg = robotic_function.robot_angle(pos1,-50);
-IK1_mid_deg = robotic_function.robot_mid_angle(pos1,-50,3);
-IK1_end_deg = robotic_function.robot_angle(pos2,-50);
-IK1_transit_deg = robotic_function.robot_mid_angle(pos2,-50,3);
+[IK1_start_deg, IK1_mid_deg] = robotic_function.robot_pick_angle(pos1,-70,3);
+[IK1_end_deg, IK1_transit_deg] = robotic_function.robot_pick_angle(pos2,-70,3);
 %Second cube
-IK2_start_deg = robotic_function.robot_angle(pos3,-50);
-IK2_mid_deg = robotic_function.robot_mid_angle(pos3,-50,3);
-IK2_end_deg = robotic_function.robot_angle(pos4,-50);
-IK2_transit_deg = robotic_function.robot_mid_angle(pos4,-50,3);
+[IK2_start_deg, IK2_mid_deg] = robotic_function.robot_pick_angle(pos3,-70,3);
+[IK2_end_deg, IK2_transit_deg] = robotic_function.robot_pick_angle(pos4,-70,3);
 %Third cube
-IK3_start_deg = robotic_function.robot_angle(pos5,-50);
-IK3_mid_deg = robotic_function.robot_angle(pos6,-50,3);
-IK3_end_deg = robotic_function.robot_angle(pos7,-50);
-IK3_transit_deg = robotic_function.robot_mid_angle(pos7,-50,3);
+IK3_start_deg = robotic_function.robot_angle(pos5,-70);
+IK3_mid_deg = robotic_function.robot_angle(pos6,-70);
+[IK3_end_deg, IK3_transit_deg] = robotic_function.robot_pick_angle(pos7,-70,3);
 %% Normal Operation with linear velocity
 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_start_deg,1);
 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_mid_deg,1);
