@@ -1,2 +1,3 @@
 # Robotic
-This is a repository for Robotic Matlab
+This is a repository for Robotic Matlab files.
+
