@@ -47,7 +47,8 @@ classdef robotic_function
         end
 
         % status = 1, front; status = 2, down; status = 3, toward;
-        function cube = robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos_coordinate, status)
+        % the phi might be wrong, it could be either 0 or -180
+        function status = robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos_coordinate, status)
              [IK_deg, IK_mid_deg] = robot_function.robot_pick_angle(pos_coordinate,-90,3);
              [IK_deg1, IK_mid_deg1] = robot_function.robot_pick_angle(pos_coordinate,0,3);
              cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
@@ -90,8 +91,33 @@ classdef robotic_function
                  pause(3)
                  cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
              end
+        end
 
-
+        %number indicates which number of cube we are stacking
+        function number = robot_stack(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos_start,pos_end, number, cube_height)
+            pos_end1 = pos_end;
+            pos_end2 = [pos_end(1),pos_end(2),pos_end(3) + cube_height];
+            pos_end3 = [pos_end2(1),pos_end2(2),pos_end2(3) + cube_height];
+            [IK_deg, IK_mid_deg] = robot_function.robot_pick_angle(pos_start,-90,3);
+            [IK_deg1, IK_mid_deg1] = robot_function.robot_pick_angle(pos_end1,-90,3);
+            [IK_deg2, IK_mid_deg2] = robot_function.robot_pick_angle(pos_end2,-90,3);
+            [IK_deg3, IK_mid_deg3] = robot_function.robot_pick_angle(pos_end3,-90,3);
+            cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
+            pause(3)
+            cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
+            if (number == 1)
+                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
+                pause(3)
+                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,0);
+            elseif (number == 2)
+                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg2,0);
+                pause(3)
+                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg2,0);
+            elseif (number == 3)
+                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg3,0);
+                pause(3)
+                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg3,0);
+            end
         end
 
         function ENABLE = torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE, ENABLE)
