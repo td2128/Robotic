@@ -123,6 +123,7 @@ zlim([min_lim max_lim]);
 xlabel('x')
 ylabel('y')
 zlabel('z')
+view(-175,16)
 grid on
 title('Forward Kinematics', 'FontSize', 15);
 pause(0.05)
@@ -243,6 +244,7 @@ zlim([min_lim max_lim])
 xlabel('x')
 ylabel('y')
 zlabel('z')
+view(-175,16)
 grid on
 title('Forward Kinematics', 'FontSize', 15)
 pause(0.05)
@@ -363,6 +365,7 @@ zlim([min_lim max_lim]);
 xlabel('x');
 ylabel('y');
 zlabel('z');
+view(-175,16)
 grid on
 title('Forward Kinematics', 'FontSize', 15);
 pause(0.05)
@@ -482,6 +485,7 @@ zlim([min_lim max_lim]);
 xlabel('x');
 ylabel('y');
 zlabel('z');
+view(-175,16)
 grid on
 title('Forward Kinematics', 'FontSize', 15);
 pause(0.05)
@@ -600,6 +604,7 @@ zlim([min_lim max_lim]);
 xlabel('x');
 ylabel('y');
 zlabel('z');
+view(-175,16)
 grid on
 title('Forward Kinematics', 'FontSize', 15);
 pause(0.05)
