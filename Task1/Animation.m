@@ -25,7 +25,7 @@ theta4 = 0:1.5:(theta4_temp - 1.5);
 
 for i = 1:length(theta1)
 % first transformation (i=1)
-T1 = T0 * threeDTransform(0, 0, 7.7, theta1(i)) 
+T1 = T0 * threeDTransform(0, 0, 7.7, theta1(i)); 
 x_dir1 = T1(1:3, 1)*5;
 y_dir1 = T1(1:3, 2)*5;
 z_dir1 = T1(1:3, 3)*5;
