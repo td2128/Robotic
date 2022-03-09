@@ -13,16 +13,16 @@ T0 = eye(4);
 min_lim = -50;
 max_lim = 50;
 
-initial_pos = [0, 0, 0, 0]
-target_pos = [50,50,50,50]
+initial_pos = [0, 0, 0, 0];
+target_pos = [50,50,50,50];
 
-theta1 = [initial_pos(1), target_pos(1)]
-theta2 = [initial_pos(2), target_pos(2)]
-theta3 = [initial_pos(3), target_pos(3)]
-theta4 = [initial_pos(4), target_pos(4)]
+theta1 = [initial_pos(1), target_pos(1)];
+theta2 = [initial_pos(2), target_pos(2)];
+theta3 = [initial_pos(3), target_pos(3)];
+theta4 = [initial_pos(4), target_pos(4)];
 
 % theta(t) = a0 + a1*t + a2 * t^2 + a3 * t^3
-tf = 20;
+tf = 30;
 t = 1:1:tf;
 % theta1 
 a0_1 = theta1(1);
@@ -64,10 +64,9 @@ theta1 = theta1_traj;
 theta2 = theta2_traj;
 theta3 = theta3_traj;
 theta4 = theta4_traj;
-
 for i = 1:length(theta1)
 % first transformation (i=1)
-T1 = T0 * threeDTransform(0, 0, 7.7, theta1(i)) 
+T1 = T0 * threeDTransform(0, 0, 7.7, theta1(i)) ;
 x_dir1 = T1(1:3, 1)*5;
 y_dir1 = T1(1:3, 2)*5;
 z_dir1 = T1(1:3, 3)*5;
@@ -165,6 +164,7 @@ zlim([min_lim max_lim]);
 xlabel('x')
 ylabel('y')
 zlabel('z')
+view(-175,16)
 grid on
 title('Forward Kinematics', 'FontSize', 15);
 pause(0.05)
@@ -194,8 +194,8 @@ z_dir1 = T1(1:3, 3)*5;
 center1 = T1(:, 4);
 
 % frame change (i=2)
-T2 = T1 * threeDTransform(-90, 0, 0, -90) 
-T2 = T2 * threeDTransform(0, 0, 0, -beta-theta2(i))
+T2 = T1 * threeDTransform(-90, 0, 0, -90) ;
+T2 = T2 * threeDTransform(0, 0, 0, -beta-theta2(i));
 x_dir2 = T2(1:3, 1)*5;
 y_dir2 = T2(1:3, 2)*5;
 z_dir2 = T2(1:3, 3)*5;
@@ -285,6 +285,7 @@ zlim([min_lim max_lim])
 xlabel('x')
 ylabel('y')
 zlabel('z')
+view(-175,16)
 grid on
 title('Forward Kinematics', 'FontSize', 15)
 pause(0.05)
@@ -336,7 +337,7 @@ z_dir4 = T4(1:3, 3)*5;
 center4 = T4(:, 4);
 
 % third transformation (i=5)
-T5 = T4 * threeDTransform(0, 0, 0, theta3(i)) 
+T5 = T4 * threeDTransform(0, 0, 0, theta3(i)) ;
 T5 = T5 * threeDTransform(0, 12.4, 0, 0);
 x_dir5 = T5(1:3, 1)*5;
 y_dir5 = T5(1:3, 2)*5;
@@ -405,6 +406,7 @@ zlim([min_lim max_lim]);
 xlabel('x');
 ylabel('y');
 zlabel('z');
+view(-175,16)
 grid on
 title('Forward Kinematics', 'FontSize', 15);
 pause(0.05)
@@ -456,15 +458,15 @@ center4 = T4(:, 4);
 
 % third transformation (i=5)
 T5 = T4 * threeDTransform(0, 0, 0, theta3_temp) ;
-T5 = T5 * threeDTransform(0, 12.4, 0, 0)
+T5 = T5 * threeDTransform(0, 12.4, 0, 0);
 x_dir5 = T5(1:3, 1)*5;
 y_dir5 = T5(1:3, 2)*5;
 z_dir5 = T5(1:3, 3)*5;
 center5 = T5(:, 4);
 
 % fourth transformation (i=6)
-T6 = T5 * threeDTransform(0, 0, 0, theta4(i)) 
-T6 = T6 * threeDTransform(0, 12.6, 0, 0) 
+T6 = T5 * threeDTransform(0, 0, 0, theta4(i)) ;
+T6 = T6 * threeDTransform(0, 12.6, 0, 0) ;
 x_dir6= T6(1:3, 1)*5;
 y_dir6 = T6(1:3, 2)*5;
 z_dir6 = T6(1:3, 3)*5;
@@ -524,6 +526,7 @@ zlim([min_lim max_lim]);
 xlabel('x');
 ylabel('y');
 zlabel('z');
+view(-175,16)
 grid on
 title('Forward Kinematics', 'FontSize', 15);
 pause(0.05)
@@ -642,8 +645,9 @@ zlim([min_lim max_lim]);
 xlabel('x');
 ylabel('y');
 zlabel('z');
+view(-175,16)
 grid on
-title('Forward Kinematics', 'FontSize', 15);
+title('Forward Kinematics - Trajectory Planning', 'FontSize', 15);
 pause(0.05)
 
 
