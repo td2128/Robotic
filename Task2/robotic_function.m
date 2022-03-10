@@ -166,7 +166,7 @@ classdef robotic_function
         end
 
         function traj = trajectory(theta, tf)
-            t = 1:1:tf;
+            t = 1:tf:5;
             a0 = theta(1);
             a1 = 0;
             a2 = (3/tf^2) * (theta(2) - theta(1));
@@ -184,7 +184,7 @@ classdef robotic_function
                 pause(2)
                 write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, theta4_traj(i));
                 pause(3)
-                traj = 0;
+                traj = theta1_traj;
             end
         end
 

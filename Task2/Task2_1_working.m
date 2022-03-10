@@ -44,8 +44,8 @@ DXL_ID12                     = 12;
 DXL_ID13                     = 13;
 DXL_ID14                     = 14;
 DXL_ID15                     = 15;
-BAUDRATE                    = 115200;
-DEVICENAME                  = 'COM4';       % Check which port is being used on your controller
+BAUDRATE                    = 1000000;
+DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                             % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                             
 TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -190,22 +190,22 @@ end
 % T_0 Matrix base frame
 %pos_1 = input('Please input desired [] position /n');
 %pos_2 = input('Please input final [] position');
-pos_1 = [-7.6,20.2,6.2];
-pos_2 = [-12.3,12.3,6];
-pos_3 = [-22.5,0,6];
-pos_4 = [-9,0,6];
-pos_5 = [-15,-15,6];
-pos_6 = [0,10,6];
+pos_1 = [-7.4,20.4,5.8];
+pos_2 = [-12.5,12.5,8];
+pos_3 = [-20,0,6];
+pos_4 = [-9.5,0,6];
+pos_5 = [-14,-14,6];
+pos_6 = [0,-11,6];
 %%
-initial_pos1 = IK(pos_1(1), pos_1(2),pos_1(3),-50);
-mid_pos1 = IK(pos_1(1), pos_1(2),pos_1(3)+3,-50);
-target_pos1 = IK(pos_2(1), pos_2(2),pos_2(3),-50);
-mid_pos2 = [IK(pos_2(1), pos_2(2),pos_2(3)+3,-50)];
+initial_pos1 = IK(pos_1(1), pos_1(2),pos_1(3),0);
+mid_pos1 = IK(pos_1(1), pos_1(2),pos_1(3)+3,0);
+target_pos1 = IK(pos_2(1), pos_2(2),pos_2(3),0);
+mid_pos2 = [IK(pos_2(1), pos_2(2),pos_2(3)+3,0)];
 
-initial_pos2 = IK(pos_3(1), pos_3(2),pos_3(3),-50);
-mid_pos3 = IK(pos_3(1), pos_3(2),pos_3(3)+3,-50);
-target_pos2 = IK(pos_4(1), pos_4(2),pos_4(3),-50);
-mid_pos4 = [IK(pos_4(1), pos_4(2),pos_4(3)+3,-50)];
+initial_pos2 = IK(pos_3(1), pos_3(2),pos_3(3),-90);
+mid_pos3 = IK(pos_3(1), pos_3(2),pos_3(3)+3,-90);
+target_pos2 = IK(pos_4(1), pos_4(2),pos_4(3),-90);
+mid_pos4 = [IK(pos_4(1), pos_4(2),pos_4(3)+3,-90)];
 
 initial_pos3 = IK(pos_5(1), pos_5(2),pos_5(3),-90);
 mid_pos5 = IK(pos_5(1), pos_5(2),pos_5(3)+3,-90);
@@ -276,6 +276,9 @@ IK5_mid4 = (-mid_pos6(4) + 180) / 0.088;
 
 %%
 pause(4)
+write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_TORQUE_ENABLE, 1);
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_deg4);
+pause(2)
 write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_TORQUE_ENABLE, 1);
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK_deg1);
 pause(2)
@@ -285,29 +288,26 @@ pause(2)
 write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_TORQUE_ENABLE, 1);
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK_deg3);
 pause(2)
-write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_TORQUE_ENABLE, 1);
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_deg4);
-pause(7)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 213/0.088);
 pause(5)
 
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_mid4);
+pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK_mid1);
 pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK_mid2);
 pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK_mid3);
 pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_mid4);
-pause(2)
 
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_deg24);
+pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK_deg21);
 pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK_deg22);
 pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK_deg23);
 pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_deg24);
-pause(7)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 137/0.088);
 
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK1_mid1);
