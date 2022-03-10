@@ -49,47 +49,46 @@ classdef robotic_function
         % status = 1, front; status = 2, down; status = 3, toward;
         % the phi might be wrong, it could be either 0 or -180
         function status = robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos_coordinate, status)
-             [IK_deg, IK_mid_deg] = robot_function.robot_pick_angle(pos_coordinate,-90,3);
-             [IK_deg1, IK_mid_deg1] = robot_function.robot_pick_angle(pos_coordinate,0,3);
-             cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
+             [IK_deg, IK_mid_deg] = robot_pick_angle(pos_coordinate,-90,6);
+             [IK_deg1, IK_mid_deg1] = robot_pick_angle(pos_coordinate,0,6);
+             cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
              pause(3)
-             cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
+             cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
              if (status == 1) % front
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
-                 pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,0);                 pause(3)
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
              elseif (status == 2) %down
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
              elseif (status == 3) %toward
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
                  pause(3)
-                 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
+                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
              end
         end
 
@@ -281,3 +280,38 @@ T6 = T5 * threeDTransform(0, 0, 0, theta4);
 T6 = T6 * threeDTransform(0, 12.6, 0, 0);
 T_final = T6;
 end
+
+function [IK_deg, IK_mid_deg] = robot_pick_angle(pos_coordinate,phi,height)
+            pos_angle = IK(pos_coordinate(1),pos_coordinate(2),pos_coordinate(3),phi);
+            pos_mid_angle = IK(pos_coordinate(1),pos_coordinate(2),pos_coordinate(3)+height,phi);
+            IK_deg1 = (pos_angle(1) + 180) / 0.088;
+            IK_deg2 = (pos_angle(2) + 180) / 0.088;
+            IK_deg3 = (-pos_angle(3) + 180) / 0.088;
+            IK_deg4 = (-pos_angle(4) + 180) / 0.088;
+            IK_mid_deg1 = (pos_mid_angle(1) + 180) / 0.088;
+            IK_mid_deg2 = (pos_mid_angle(2) + 180) / 0.088;
+            IK_mid_deg3 = (-pos_mid_angle(3) + 180) / 0.088;
+            IK_mid_deg4 = (-pos_mid_angle(4) + 180) / 0.088;
+            IK_deg = [IK_deg1,IK_deg2,IK_deg3,IK_deg4];
+            IK_mid_deg = [IK_mid_deg1,IK_mid_deg2,IK_mid_deg3,IK_mid_deg4];
+end
+
+ function cube = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg, status)
+            %id15 = 1 close; id15 = 0 open
+            if status == 1
+                id15 = 213/0.088;
+            elseif status == 0
+                id15 = 137/0.088;
+            end
+            write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_deg(1));
+            pause(2)
+            write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_deg(2));
+            pause(2)
+            write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_deg(3));
+            pause(2)
+            write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_deg(4));
+            pause(5)
+            write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, id15);
+            pause(2)
+            cube = 0;
+        end

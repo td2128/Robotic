@@ -158,7 +158,14 @@ write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_TORQUE_ENABLE, 1);
 write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_TORQUE_ENABLE, 1);
 
 % Default position for all servos
-
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, 2048);
+pause(2)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, 2048);
+pause(2)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, 2048);
+pause(2)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, 2048);
+pause(5)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 137/0.088);
 
 % % Disable Dynamixel Torque
@@ -183,21 +190,82 @@ end
 % T_0 Matrix base frame
 %pos_1 = input('Please input desired [] position /n');
 %pos_2 = input('Please input final [] position');
-pos_1 = [-5.1,20.2,6.2];
-pos_2 = [-9.9,10.3,6];
-pos_3 = [-22.5,0,5.7];
-pos_4 = [-9.8,0,6];
-pos_5 = [0,10,5.6];
-pos_6 = [-15.3,-15.3,8];
-pos_7 = [-4,-5,11];
-
+pos_1 = [-7.6,20.2,6.2];
+pos_2 = [-12.9,12.9,5.3];
+pos_3 = [-22.5,0,6];
+pos_4 = [-9,0,6];
+pos_5 = [-15,-15,6];
+pos_6 = [0,10,6];
 %%
-initial_pos3 = IK(pos_5(1), pos_5(2),pos_5(3),-60);
-mid_pos5 = IK(pos_5(1), pos_5(2),pos_5(3)+3,-60);
-target_pos3 = IK(pos_6(1), pos_6(2),pos_6(3),-60);
-mid_pos6 = [IK(pos_6(1), pos_6(2),pos_6(3)+3,-60)];
-mid_pos7 = [IK(pos_7(1), pos_7(2),pos_7(3)+3,-60)];
+initial_pos1 = IK(pos_1(1), pos_1(2),pos_1(3),-50);
+mid_pos1 = IK(pos_1(1), pos_1(2),pos_1(3)+3,-50);
+target_pos1 = IK(pos_2(1), pos_2(2),pos_2(3),-90);
+mid_pos2 = [IK(pos_2(1), pos_2(2),pos_2(3)+3,-90)];
 
+rotate_pos1 = [IK(pos_2(1), pos_2(2),pos_2(3)+3,0)];
+rotate_pos2 = IK(pos_2(1)+0.8, pos_2(2)-0.8,pos_2(3)+2,0);
+
+
+initial_pos2 = IK(pos_3(1), pos_3(2),pos_3(3),-50);
+mid_pos3 = IK(pos_3(1), pos_3(2),pos_3(3)+3,-50);
+target_pos2 = IK(pos_4(1), pos_4(2),pos_4(3),-50);
+mid_pos4 = [IK(pos_4(1), pos_4(2),pos_4(3)+3,-50)];
+
+initial_pos3 = IK(pos_5(1), pos_5(2),pos_5(3),-90);
+mid_pos5 = IK(pos_5(1), pos_5(2),pos_5(3)+3,-90);
+target_pos3 = IK(pos_6(1), pos_6(2),pos_6(3),-90);
+mid_pos6 = [IK(pos_6(1), pos_6(2),pos_6(3)+3,-90)];
+
+
+IK_deg1 = (initial_pos1(1) + 180) / 0.088;
+IK_deg2 = (initial_pos1(2) + 180) / 0.088;
+IK_deg3 = (-initial_pos1(3) + 180) / 0.088;
+IK_deg4 = (-initial_pos1(4) + 180) / 0.088;
+
+IK_mid1 = (mid_pos1(1) + 180) / 0.088;
+IK_mid2 = (mid_pos1(2) + 180) / 0.088;
+IK_mid3 = (-mid_pos1(3) + 180) / 0.088;
+IK_mid4 = (-mid_pos1(4) + 180) / 0.088;
+
+IK1_mid1 = (mid_pos2(1) + 180) / 0.088;
+IK1_mid2 = (mid_pos2(2) + 180) / 0.088;
+IK1_mid3 = (-mid_pos2(3) + 180) / 0.088;
+IK1_mid4 = (-mid_pos2(4) + 180) / 0.088;
+
+IK_deg21 = (target_pos1(1) + 180) / 0.088;
+IK_deg22 = (target_pos1(2) + 180) / 0.088;
+IK_deg23 = (-target_pos1(3) + 180) / 0.088;
+IK_deg24 = (-target_pos1(4) + 180) / 0.088;
+
+rotate_deg11 = (rotate_pos1(1) + 180) / 0.088;
+rotate_deg12 = (rotate_pos1(2) + 180) / 0.088;
+rotate_deg13 = (-rotate_pos1(3) + 180) / 0.088;
+rotate_deg14 = (-rotate_pos1(4) + 180) / 0.088;
+
+rotate_deg21 = (rotate_pos2(1) + 180) / 0.088;
+rotate_deg22 = (rotate_pos2(2) + 180) / 0.088;
+rotate_deg23 = (-rotate_pos2(3) + 180) / 0.088;
+rotate_deg24 = (-rotate_pos2(4) + 180) / 0.088;
+%%
+IK2_deg1 = (initial_pos2(1) + 180) / 0.088;
+IK2_deg2 = (initial_pos2(2) + 180) / 0.088;
+IK2_deg3 = (-initial_pos2(3) + 180) / 0.088;
+IK2_deg4 = (-initial_pos2(4) + 180) / 0.088;
+
+IK2_mid1 = (mid_pos3(1) + 180) / 0.088;
+IK2_mid2 = (mid_pos3(2) + 180) / 0.088;
+IK2_mid3 = (-mid_pos3(3) + 180) / 0.088;
+IK2_mid4 = (-mid_pos3(4) + 180) / 0.088;
+
+IK2_deg21 = (target_pos2(1) + 180) / 0.088;
+IK2_deg22 = (target_pos2(2) + 180) / 0.088;
+IK2_deg23 = (-target_pos2(3) + 180) / 0.088;
+IK2_deg24 = (-target_pos2(4) + 180) / 0.088;
+
+IK3_mid1 = (mid_pos4(1) + 180) / 0.088;
+IK3_mid2 = (mid_pos4(2) + 180) / 0.088;
+IK3_mid3 = (-mid_pos4(3) + 180) / 0.088;
+IK3_mid4 = (-mid_pos4(4) + 180) / 0.088;
 %% 
 IK3_deg1 = (initial_pos3(1) + 180) / 0.088;
 IK3_deg2 = (initial_pos3(2) + 180) / 0.088;
@@ -219,63 +287,163 @@ IK5_mid2 = (mid_pos6(2) + 180) / 0.088;
 IK5_mid3 = (-mid_pos6(3) + 180) / 0.088;
 IK5_mid4 = (-mid_pos6(4) + 180) / 0.088;
 
-IK6_mid1 = (mid_pos7(1) + 180) / 0.088;
-IK6_mid2 = (mid_pos7(2) + 180) / 0.088;
-IK6_mid3 = (-mid_pos7(3) + 180) / 0.088;
-IK6_mid4 = (-mid_pos7(4) + 180) / 0.088;
 
-%% 
-write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_TORQUE_ENABLE, 1);
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK3_deg1);
+%%
+% pause(4)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK_deg1);
+% pause(2)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK_deg2);
+% pause(2)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK_deg3);
+% pause(2)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_deg4);
+% pause(7)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 213/0.088);
+% pause(5)
+% 
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK_mid1);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK_mid2);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK_mid3);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_mid4);
+% pause(2)
+
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK_deg21);
 pause(2)
-write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_TORQUE_ENABLE, 1);
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK3_deg2);
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK_deg22);
 pause(2)
-write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_TORQUE_ENABLE, 1);
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK3_deg3);
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK_deg23);
 pause(2)
-write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_TORQUE_ENABLE, 1);
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK3_deg4);
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_deg24);
 pause(7)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 213/0.088);
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 220/0.088);
+
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK1_mid1);
+pause(2)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK1_mid2);
+pause(2)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK1_mid3);
+pause(2)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK1_mid4);
 pause(5)
 
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK4_mid1);
-pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK4_mid2);
-pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK4_mid3);
-pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK4_mid4);
-pause(2)
 
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK6_mid1);
-% pause(2)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK6_mid2);
-% pause(2)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK6_mid3);
-% pause(2)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK6_mid4);
-% pause(2)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION,  100/0.088);
+pause(5)
 
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK3_deg21);
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, rotate_deg21);
 pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK3_deg22);
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION,  rotate_deg22);
 pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK3_deg23);
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION,  rotate_deg23);
 pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK3_deg24);
-pause(7)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION,  rotate_deg24);
+pause(5)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 137/0.088);
+pause(5)
+%%
 
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK5_mid1);
-pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK5_mid2);
-pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK5_mid3);
-pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK5_mid4);
-pause(2)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK2_deg1);
+% pause(2)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK2_deg2);
+% pause(2)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK2_deg3);
+% pause(2)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK2_deg4);
+% pause(7)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 213/0.088);
+% pause(5)
+% 
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK2_mid1);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK2_mid2);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK2_mid3);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK2_mid4);
+% pause(2)
+% 
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK2_deg21);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK2_deg22);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK2_deg23);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK2_deg24);
+% pause(7)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 137/0.088);
+% 
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK3_mid1);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK3_mid2);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK3_mid3);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK3_mid4);
+% pause(2)
+% 
+% %% 
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK3_deg1);
+% pause(2)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK3_deg2);
+% pause(2)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK3_deg3);
+% pause(2)
+% write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_TORQUE_ENABLE, 1);
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK3_deg4);
+% pause(7)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 217/0.088);
+% pause(5)
+% 
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK4_mid1);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK4_mid2);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK4_mid3);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK4_mid4);
+% pause(2)
+% 
+% % write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK6_mid1);
+% % pause(2)
+% % write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK6_mid2);
+% % pause(2)
+% % write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK6_mid3);
+% % pause(2)
+% % write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK6_mid4);
+% % pause(2)
+% 
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK3_deg21);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK3_deg22);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK3_deg23);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK3_deg24);
+% pause(7)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 137/0.088);
+% 
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK5_mid1);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK5_mid2);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK5_mid3);
+% pause(2)
+% write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK5_mid4);
+% pause(2)
 
 %% 
 
