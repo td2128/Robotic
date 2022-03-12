@@ -44,7 +44,7 @@ DXL_ID12                     = 12;
 DXL_ID13                     = 13;
 DXL_ID14                     = 14;
 DXL_ID15                     = 15;
-BAUDRATE                    = 1000000;
+BAUDRATE                    = 115200;
 DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                             % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                             
@@ -145,10 +145,10 @@ write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_DRIVE_MODE, 4);
 write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_DRIVE_MODE, 4);
 pause(0.5)
 % set Profile Velocity
-write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID11,ADDR_PRO_PROFILE_VELOCITY,4000);
-write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID12,ADDR_PRO_PROFILE_VELOCITY,4000);
-write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID13,ADDR_PRO_PROFILE_VELOCITY,4000);
-write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID14,ADDR_PRO_PROFILE_VELOCITY,4000);
+write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID11,ADDR_PRO_PROFILE_VELOCITY,2500);
+write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID12,ADDR_PRO_PROFILE_VELOCITY,2500);
+write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID13,ADDR_PRO_PROFILE_VELOCITY,2500);
+write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID14,ADDR_PRO_PROFILE_VELOCITY,2500);
 write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID15,ADDR_PRO_PROFILE_VELOCITY,3000);
 
 write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_TORQUE_ENABLE, 1);
@@ -159,13 +159,9 @@ write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_TORQUE_ENABLE, 1);
 
 % Default position for all servos
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, 2048);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, 2048);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, 2048);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, 2048);
-pause(5)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 137/0.088);
 
 % % Disable Dynamixel Torque
@@ -190,17 +186,17 @@ end
 % T_0 Matrix base frame
 %pos_1 = input('Please input desired [] position /n');
 %pos_2 = input('Please input final [] position');
-pos_1 = [-7.4,20.4,5.8];
-pos_2 = [-12.5,12.5,8];
+pos_1 = [-7.4,20.4,5.5];
+pos_2 = [-12.5,12.5,5.5];
 pos_3 = [-20,0,6];
 pos_4 = [-9.5,0,6];
 pos_5 = [-14,-14,6];
 pos_6 = [0,-11,6];
 %%
-initial_pos1 = IK(pos_1(1), pos_1(2),pos_1(3),0);
-mid_pos1 = IK(pos_1(1), pos_1(2),pos_1(3)+3,0);
-target_pos1 = IK(pos_2(1), pos_2(2),pos_2(3),0);
-mid_pos2 = [IK(pos_2(1), pos_2(2),pos_2(3)+3,0)];
+initial_pos1 = IK(pos_1(1), pos_1(2),pos_1(3),-85);
+mid_pos1 = IK(pos_1(1), pos_1(2),pos_1(3)+3,-85);
+target_pos1 = IK(pos_2(1), pos_2(2),pos_2(3),-85);
+mid_pos2 = [IK(pos_2(1), pos_2(2),pos_2(3)+3,-85)];
 
 initial_pos2 = IK(pos_3(1), pos_3(2),pos_3(3),-90);
 mid_pos3 = IK(pos_3(1), pos_3(2),pos_3(3)+3,-90);
@@ -276,50 +272,34 @@ IK5_mid4 = (-mid_pos6(4) + 180) / 0.088;
 
 %%
 pause(4)
-write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_TORQUE_ENABLE, 1);
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_deg4);
-pause(2)
-write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_TORQUE_ENABLE, 1);
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK_deg1);
-pause(2)
-write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_TORQUE_ENABLE, 1);
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK_deg2);
-pause(2)
-write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_TORQUE_ENABLE, 1);
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK_deg3);
 pause(2)
-write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 213/0.088);
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_deg4);
+pause(2)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 215/0.088);
 pause(3)
 
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_mid4);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK_mid1);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK_mid2);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK_mid3);
-pause(2)
+pause(3)
 
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK_deg24);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK_deg21);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK_deg22);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK_deg23);
-pause(2)
+pause(4)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID15, ADDR_PRO_GOAL_POSITION, 137/0.088);
 pause(3)
 
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK1_mid1);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_GOAL_POSITION, IK1_mid2);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_GOAL_POSITION, IK1_mid3);
-pause(2)
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_GOAL_POSITION, IK1_mid4);
-pause(2)
-
+pause(3)
 %%
 write1ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_TORQUE_ENABLE, 1);
 write4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_GOAL_POSITION, IK2_deg1);

@@ -45,7 +45,7 @@ DXL_ID13                     = 13;
 DXL_ID14                     = 14;
 DXL_ID15                     = 15;
 BAUDRATE                    = 115200;
-DEVICENAME                  = 'COM4';           % Check which port is being used on your controller
+DEVICENAME                  = 'COM10';           % Check which port is being used on your controller
                                             % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                             
 TORQUE_ENABLE               = 1;            % Value for enabling the torque

@@ -29,94 +29,178 @@ classdef robotic_function
         function cube = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg, status)
             %id15 = 1 close; id15 = 0 open
             if status == 1
-                id15 = 213/0.088;
+                id15 = 215/0.088;
             elseif status == 0
                 id15 = 137/0.088;
             end
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_deg(1));
-            pause(2)
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_deg(2));
-            pause(2)
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_deg(3));
-            pause(2)
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_deg(4));
-            pause(5)
+            pause(3)
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, id15);
-            pause(2)
+            pause(2.5)
             cube = 0;
         end
 
         % status = 1, front; status = 2, down; status = 3, toward;
         % the phi might be wrong, it could be either 0 or -180
-        function status = robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos_coordinate, status)
-             [IK_deg, IK_mid_deg] = robot_pick_angle(pos_coordinate,-90,6);
-             [IK_deg1, IK_mid_deg1] = robot_pick_angle(pos_coordinate,0,6);
-             cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
-             pause(3)
-             cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
-             if (status == 1) % front
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,0);                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
-             elseif (status == 2) %down
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
-             elseif (status == 3) %toward
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,1);
-                 pause(3)
-                 cube1 = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
-             end
-        end
+        function status = robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos,height,x,y,z,pick_phi,drop_phi,status)
+            start_pos = IK(pos(1), pos(2),pos(3),pick_phi);
+            mid_pos = [IK(pos(1), pos(2),pos(3)+height,pick_phi)];
+            drop_pos = IK(pos(1)+x, pos(2)+y,pos(3)+z,drop_phi);
 
-        %number indicates which number of cube we are stacking
-        function number = robot_stack(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos_start,pos_end, number, cube_height)
-            pos_end1 = pos_end;
-            pos_end2 = [pos_end(1),pos_end(2),pos_end(3) + cube_height];
-            pos_end3 = [pos_end2(1),pos_end2(2),pos_end2(3) + cube_height];
-            [IK_deg, IK_mid_deg] = robot_function.robot_pick_angle(pos_start,-90,3);
-            [IK_deg1, IK_mid_deg1] = robot_function.robot_pick_angle(pos_end1,-90,3);
-            [IK_deg2, IK_mid_deg2] = robot_function.robot_pick_angle(pos_end2,-90,3);
-            [IK_deg3, IK_mid_deg3] = robot_function.robot_pick_angle(pos_end3,-90,3);
-            cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg,1);
-            pause(3)
-            cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg,1);
-            if (number == 1)
-                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg1,0);
+            IK_deg1 = (start_pos(1) + 180) / 0.088;
+            IK_deg2 = (start_pos(2) + 180) / 0.088;
+            IK_deg3 = (-start_pos(3) + 180) / 0.088;
+            IK_deg4 = (-start_pos(4) + 180) / 0.088;
+
+            IK_mid1 = (mid_pos(1) + 180) / 0.088;
+            IK_mid2 = (mid_pos(2) + 180) / 0.088;
+            IK_mid3 = (-mid_pos(3) + 180) / 0.088;
+            IK_mid4 = (-mid_pos(4) + 180) / 0.088;
+
+            rotate_deg1 = (drop_pos(1) + 180) / 0.088;
+            rotate_deg2 = (drop_pos(2) + 180) / 0.088;
+            rotate_deg3 = (-drop_pos(3) + 180) / 0.088;
+            rotate_deg4 = (-drop_pos(4) + 180) / 0.088;
+
+            if status == 1
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_deg1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_deg2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_deg3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_deg4);
                 pause(3)
-                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg1,0);
-            elseif (number == 2)
-                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg2,0);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 223/0.088);
                 pause(3)
-                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg2,0);
-            elseif (number == 3)
-                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg3,0);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_mid1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_mid2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_mid3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_mid4);
                 pause(3)
-                cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid_deg3,0);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, 95/0.088);
+                pause(2)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, rotate_deg1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, rotate_deg2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, rotate_deg3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, rotate_deg4);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_mid1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_mid2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_mid3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_mid4);
+                pause(5)
+
+            elseif status ==2
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_deg1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_deg2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_deg3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_deg4);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 223/0.088);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_mid1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_mid2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_mid3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_mid4);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, 95/0.088);
+                pause(2)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, rotate_deg1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, rotate_deg2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, rotate_deg3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, rotate_deg4);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_mid1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_mid2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_mid3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_mid4);
+                pause(5)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_deg1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_deg2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_deg3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_deg4);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 223/0.088);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_mid1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_mid2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_mid3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_mid4);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, 95/0.088);
+                pause(2)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, rotate_deg1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, rotate_deg2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, rotate_deg3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, rotate_deg4);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_mid1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_mid2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_mid3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_mid4);
+                pause(5)
+
+            elseif status == 3
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, 95/0.088);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_deg1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_deg2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_deg3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_deg4);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 218/0.088);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_mid1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_mid2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_mid3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_mid4);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, rotate_deg1);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, rotate_deg2);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, rotate_deg3);
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, rotate_deg4);
+                pause(3)
+                write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
+                pause(3)
             end
+        end
+        
+        % pos2 is the position where cube is placed
+        % rotate means whether it needs to be rotated or not
+        % 1 is yes, 0 is no
+        %number indicates which number of cube we are stacking
+        %1 indicates second cube, 2 means third cube
+        function number = robot_stack(pos1, pos2, transit_z, port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos_start,pos_end, number, rotate)
+            if number == 1 
+                cube_height = 2.5;
+            elseif number == 2
+                cube_height = 5;
+            end
+
+            if rotate == 0
+                phi1 = -85;
+                phi2 = -85;
+            elseif rotate == 1
+                phi1 = -85;
+                phi2 = 0;
+            end
+
+            start_pos = IK(pos1(1), pos1(2),pos1(3),phi1);
+            mid_pos1   = IK(pos1(1), pos1(2),pos1(3)+3,phi1);
+            transit_angle = IK(pos2(1), pos2(2), pos2(3) + cube_height + transit_z, phi2);
+            end_pos = IK(pos2(1), pos2(2), pos2(3)+cube_height, phi2);
+            mid_pos2 = IK(pos2(1), pos2(2), pos2(3)+cube_height+3, phi2);
+
+
+
+
+
+           
         end
 
         function ENABLE = torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE, ENABLE)

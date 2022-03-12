@@ -44,7 +44,7 @@ DXL_ID12                     = 12;
 DXL_ID13                     = 13;
 DXL_ID14                     = 14;
 DXL_ID15                     = 15;
-BAUDRATE                    = 1000000;
+BAUDRATE                    = 115200;
 DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                             % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
 DEFAULT_POS = [2048,2048,2048,2048];                                            
@@ -118,12 +118,12 @@ MIN = robotic_function.min_pos_limit(port_num,PROTOCOL_VERSION,ADDR_MIN_POS,MIN_
 % Put actuator into Position Control Mode
 mode = robotic_function.operating_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_OPERATING_MODE, 3);
 %Enable Torque
-torque_disbale = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,0);
+%torque_disbale = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,0);
 % Drive mode
 mode = robotic_function.drive_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_DRIVE_MODE,4);
 pause(0.5)
 % set Profile Velocity
-speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,3000,3000);
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,2250,2000);
 %Enable Torque
 torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,1);
 
@@ -153,40 +153,42 @@ end
 %pos_2 = input('Please input final [] position');
 %first cube pos
 %% Need to measure location again, it is off
-pos1 = [-7.6,20.2,6.5];
-pos2 = [-12.5,12.7,6];
-pos1_mid_2 = [-22.5,0,9];
+pos1 = [-7.6,20.6,6.9];
+pos2 = [-12.8,12.8,6.3];
+%pos1_2 = [-22.2,0,8];
 %second cube pos
-pos3 = [-22.5,0,6.5];
-pos4 = [-10,0,6];
+pos3 = [-22.9,0,7.2];
+pos4 = [-10.5,0,5.5];
 %third cube pos
-pos5 = [-15,-15,6.5];
-pos6 = [0,12.65,6];
-phi = -50;
+pos5 = [-15.3,-15.3,6.8];
+pos6 = [0,10.4,5.5];
+phi = -80;
 %% Pick up all cubes and place them
 %First cube
 [IK1_start_deg, IK1_mid_deg] = robotic_function.robot_pick_angle(pos1,phi,3);
-[IK1_end_deg, IK1_transit_deg] = robotic_function.robot_pick_angle(pos2,phi,5);
-IK1_2mid_deg = robotic_function.robot_angle(pos1_mid_2,phi);
+[IK1_end_deg, IK1_transit_deg] = robotic_function.robot_pick_angle(pos2,phi,3);
+%IK1_2_deg = robotic_function.robot_angle(pos1_2,phi);
 %Second cube
-[IK2_start_deg, IK2_mid_deg] = robotic_function.robot_pick_angle(pos3,phi,3);
-[IK2_end_deg, IK2_transit_deg] = robotic_function.robot_pick_angle(pos4,phi,12);
+[IK2_start_deg, IK2_mid_deg] = robotic_function.robot_pick_angle(pos3,phi,2);
+[IK2_end_deg, IK2_transit_deg] = robotic_function.robot_pick_angle(pos4,phi,3);
 
 %Third cube
 [IK3_start_deg, IK3_mid_deg] = robotic_function.robot_pick_angle(pos5,phi,3);
 [IK3_end_deg, IK3_transit_deg] = robotic_function.robot_pick_angle(pos6,phi,3);
 %% Normal Operation with linear velocity
+cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_mid_deg,0);
 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_start_deg,1);
 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_mid_deg,1);
+cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_transit_deg,1);
 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_end_deg,0);
 cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_transit_deg,0);
-cube1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_2mid_deg,0);
 
+cube2 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_mid_deg,0);
 cube2 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_start_deg,1);
 cube2 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_mid_deg,1);
 cube2 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_end_deg,0);
-cube2 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_transit_deg,0);
 
+cube3 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_mid_deg,0);
 cube3 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_start_deg,1);
 cube3 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_mid_deg,1);
 cube3 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_end_deg,0);

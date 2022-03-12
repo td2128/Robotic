@@ -45,7 +45,7 @@ DXL_ID13                     = 13;
 DXL_ID14                     = 14;
 DXL_ID15                     = 15;
 BAUDRATE                    = 115200;
-DEVICENAME                  = 'COM4';       % Check which port is being used on your controller
+DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                             % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                             
 TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -191,7 +191,7 @@ end
 %pos_1 = input('Please input desired [] position /n');
 %pos_2 = input('Please input final [] position');
 pos_1 = [-7.6,20.2,6.2];
-pos_2 = [-13,13,6.3];
+pos_2 = [-12.8,12.8,6.3];
 % pos_3 = [-22.5,0,6];
 % pos_4 = [-9,0,6];
 % pos_5 = [-15,-15,6];
