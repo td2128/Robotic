@@ -135,7 +135,7 @@ torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TOR
 % traj = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, default1,default2,default3,default4);
 % write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
 
-cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
+cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 1);
 
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
 dxl_error = getLastRxPacketError(port_num, PROTOCOL_VERSION);
@@ -153,66 +153,46 @@ end
 %pos_2 = input('Please input final [] position');
 %first cube pos
 %% Need to measure location again, it is off
-pos1 = [-7.6,20.6,5.0];
-pos2 = [-12.8,12.8,5.2];
-%pos1_2 = [-22.2,0,8];
-%second cube pos
-pos3 = [-22.9,0,5.2];
-pos4 = [-10.5,0,5.5];
-%third cube pos
-%pos5 = [-15.3,-15.3,6.5];
-pos5 = [-15.6,-15.6,4.4];
-pos6 = [0,10.4,5.5];
-phi = -80;
-pos_mid = [-15.6,-15.6,7.6];
+centre = [-27.3958,0,20.4773];
+phi = 0;
 %% Pick up all cubes and place them
 %First cube
-[IK1_start_deg, IK1_mid_deg] = robotic_function.robot_pick_angle(pos1,phi,3);
-[IK1_end_deg, IK1_transit_deg] = robotic_function.robot_pick_angle(pos2,phi,3);
-%IK1_2_deg = robotic_function.robot_angle(pos1_2,phi);
-%Second cube
-[IK2_start_deg, IK2_mid_deg] = robotic_function.robot_pick_angle(pos3,phi,2);
-[IK2_end_deg, IK2_transit_deg] = robotic_function.robot_pick_angle(pos4,phi,3);
-IK = robotic_function.robot_angle(pos_mid,0);
-%Third cube
-[IK3_start_deg, IK3_mid_deg] = robotic_function.robot_pick_angle(pos5,phi,3);
-[IK3_end_deg, IK3_transit_deg] = robotic_function.robot_pick_angle(pos6,phi,3);
-%% Normal Operation with linear velocity
-status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2,6,1.1,-0.8,1.9,-80,0,1);
-status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos3,2.5,1.2,0.3,-0.3,-80,0,2);
-default = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,IK ,0);
-status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos5,3,-0.1,-0.1,0.2,0,-75,3);
-default = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS,0);
-%% 
-% % trajectory trial
-%From default to first cube
-% tf = 5;
-% tf_small = 1;
-% theta1_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(1)],tf);
-% theta2_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(2)],tf);
-% theta3_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(3)],tf);
-% theta4_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(4)],tf);
-% traj1 = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_1,theta2_1,theta3_1,theta4_1);
-% pause(3)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 215/0.088);
-% pause(2)
-% theta1_11 = robotic_function.trajectory([IK1_start_deg(1),IK1_mid_deg(1)],tf_small);
-% theta2_11 = robotic_function.trajectory([IK1_start_deg(2),IK1_mid_deg(2)],tf_small);
-% theta3_11 = robotic_function.trajectory([IK1_start_deg(3),IK1_mid_deg(3)],tf_small);
-% theta4_11 = robotic_function.trajectory([IK1_start_deg(4),IK1_mid_deg(4)],tf_small);
-% traj2 = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_11,theta2_11,theta3_11,theta4_11);
-% pause(3)
-% theta1_111 = robotic_function.trajectory([IK1_mid_deg(1),IK1_end_deg(1)],tf_small);
-% theta2_111 = robotic_function.trajectory([IK1_mid_deg(2),IK1_end_deg(2)],tf_small);
-% theta3_111 = robotic_function.trajectory([IK1_mid_deg(3),IK1_end_deg(3)],tf_small);
-% theta4_111 = robotic_function.trajectory([IK1_mid_deg(4),IK1_end_deg(4)],tf_small);
-% traj3 = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_111,theta2_111,theta3_111,theta4_111);
-% pause(3)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
-% pause(2)
-%% Rotation
-%%status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2, 1);
+%IK_start = robotic_function.robot_angle(centre,phi);
+%% Clculate all IK 
+tf = 6;
+t = 0:1:tf;
+r = 10;
+full_traj = [];
+angle_step = 10;
+angle = 30;
+start_pos = [centre(1)+r*cosd(0), centre(2)+r*sind(0), centre(3)]';
+for i = 1:angle_step:angle
+desired_pos = [centre(1)+r*cosd(i), centre(2)+r*sind(i), centre(3)]';
+start_ang = IK(start_pos, 0);
+desired_ang = IK(desired_pos, 0);
+theta1 = [start_ang(1), desired_ang(1)];
+theta2 = [start_ang(2), desired_ang(2)];
+theta3= [start_ang(3), desired_ang(3)];
+theta4 = [start_ang(4), desired_ang(4)];
+theta1_traj = trajectory(theta1, t, tf);
+theta2_traj = trajectory(theta2, t, tf);
+theta3_traj = trajectory(theta3, t, tf);
+theta4_traj = trajectory(theta4, t, tf);
+full_traj = [full_traj, [theta1_traj; theta2_traj; theta3_traj; theta4_traj]];
+start_pos = desired_pos;
+end
 
+theta1_draw = (full_traj(1, :) + 180)./0.088;
+theta2_draw = (full_traj(2, :) + 180)./0.088;
+theta3_draw = (-full_traj(3, :) + 180)./0.088;
+theta4_draw = (-full_traj(4, :) + 180)./0.088;
+
+for i = 1:length(theta1_draw)
+    write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, theta1_draw(i));
+    write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, theta2_draw(i));
+    write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, theta3_draw(i));
+    write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, theta4_draw(i));
+end
 %% 
     j = 0;
     while (j<3000)
@@ -259,7 +239,77 @@ unloadlibrary(lib_name);
 
 close all;
 %clear all;
+function  res = IK(target_end_pos, phi)
+a2 = 13;
+a3 = 12.4;
+a4 = 12.6;
+beta = atand(0.024/0.128);
+r3 = sqrt(target_end_pos(1)^2 + target_end_pos(2)^2);
+z3 = target_end_pos(3) - 7.7;
+r2 = r3 - a4*cosd(phi);
+z2 = z3 - a4*sind(phi);
+cos_theta3 = (r2^2+z2^2-a2^2-a3^2) / (2*a2*a3);
+% no solution case
+if cos_theta3 < -1 || cos_theta3 > 1
+res = 'no solution found';
+end
+theta3_temp = acosd(cos_theta3);
+theta3_temp_ = -acosd(cos_theta3);
+theta3 = theta3_temp - beta + 90;
+theta3_ = theta3_temp_ - beta + 90;
+k1 = a2 + a3 * cosd(theta3_temp) ;
+k2 = a3 * sind(theta3_temp);
+k2_ = a3 * sind(theta3_temp_);
+theta2_temp = atand(z2/r2) - atand(k2/k1);
+theta2_temp_ = atand(z2/r2) - atand(k2_/k1);
+theta2 = 90 - theta2_temp - beta;
+theta2_ = 90 - theta2_temp_ - beta;
+theta4 = phi - theta2_temp - theta3_temp;
+theta4_ = phi - theta2_temp_ - theta3_temp_;
+theta1 = atand(target_end_pos(2)/target_end_pos(1));
+theta1_ = -atand(target_end_pos(2)/target_end_pos(1));
+if theta1 == 0
+theta1 = 0;
+theta1_ = 180;
+end
+res1 = [theta1, theta2, theta3, theta4];
+res2 = [theta1, theta2_, theta3_, theta4_];
+res3 = [theta1_, theta2, theta3, theta4];
+res4 = [theta1_, theta2_, theta3_, theta4_];
+res = res2;
+end
 
+function [T_final, center1, center2, center3, center4, center5, center6] = FK(theta1, theta2, theta3, theta4, beta)
+T0 = eye(4);
+T1 = T0 * DH(0, 0, 7.7, theta1);
+center1 = T1(:, 4);
+T2 = T1 * DH(-90, 0, 0, -90);
+center2 = T2(:, 4);
+T3 = T2 * DH(0, 0, 0, -beta-theta2);
+T3 = T3 * DH(0, 13, 0, 0);
+center3 = T3(:, 4);
+T4 = T3 * DH(0, 0, 0, beta-90);
+center4 = T4(:, 4);
+T5 = T4 * DH(0, 0, 0, theta3);
+T5 = T5 * DH(0, 12.4, 0, 0);
+center5 = T5(:, 4);
+T6 = T5 * DH(0, 0, 0, theta4);
+T6 = T6 * DH(0, 12.6, 0, 0);
+center6 = T6(:, 4);
+T_final = T6;
+end
 
+function final_mat = DH(alpha, a, d, theta)
+final_mat = [cosd(theta), -sind(theta), 0, a;
+sind(theta)*cosd(alpha), cosd(theta)*cosd(alpha), -sind(alpha), -sind(alpha)*d;
+sind(theta)*sind(alpha), cosd(theta)*sind(alpha), cosd(alpha), cosd(alpha)*d;
+0, 0, 0, 1];
+end
 
-
+function traj = trajectory(theta, t, tf)
+a0 = theta(1);
+a1 = 0;
+a2 = (3/tf^2) * (theta(2) - theta(1));
+a3 = (-2/tf^3) * (theta(2) - theta(1));
+traj = a0 + a1 .* t + a2 .* t.^2 + a3 .* t.^3;
+end

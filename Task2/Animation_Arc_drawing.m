@@ -1,5 +1,5 @@
 clc
-clear all
+%clear all
 close all
 
 % x-axis: GREEN
@@ -8,7 +8,7 @@ close all
 
 %% FK
 %Const
-load full_traj_morepoints.mat
+%load full_traj_morepoints.mat
 beta = atand(0.024/0.128);
 T0 = eye(4);
 min_lim = -20;

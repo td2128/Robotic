@@ -29,7 +29,8 @@ classdef robotic_function
         function status = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg, status)
             %id15 = 1 close; id15 = 0 open
             if status == 1
-                id15 = 223/0.088;
+                %id15 = 223/0.088;
+                id15 = 233/0.088;
             elseif status == 0
                 id15 = 137/0.088;
             end
@@ -294,7 +295,8 @@ end
 function status = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg, status)
             %id15 = 1 close; id15 = 0 open
             if status == 1
-                id15 = 223/0.088;
+                %id15 = 223/0.088;
+                id15 = 233/0.088;
             elseif status == 0
                 id15 = 137/0.088;
             end
