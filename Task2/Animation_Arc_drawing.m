@@ -8,7 +8,7 @@ close all
 
 %% FK
 %Const
-load full_traj.mat
+load full_traj_morepoints.mat
 beta = atand(0.024/0.128);
 T0 = eye(4);
 min_lim = -20;
@@ -122,6 +122,7 @@ else
     plot3([column_previous(1) column_curr(1)], [column_previous(2) column_curr(2)], [column_previous(3) column_curr(3)], 'LineWidth', 1.5, 'Color','black');
 end
 view(-176,77);
+pause(1/100000);
 xlim([-35 10]);
 ylim([-30 20]);
 zlim([-10 35]);
@@ -130,7 +131,6 @@ ylabel('y')
 zlabel('z')
 grid on
 title('Square Plotting', 'FontSize', 15);
-pause(0.1)
 delete(line0)
 delete(frame0_1)
 delete(frame0_2)
@@ -190,7 +190,7 @@ line3 = plot3([center5(1) center6(1)], [center5(2) center6(2)], [center5(3) cent
 % fourth transformation (i=6)
 hold on
 scatter3(center6(1), center6(2), center6(3), 'o', 'LineWidth', 0.5,'MarkerEdgeColor','k');
- plot3([column_previous(1) column_curr(1)], [column_previous(2) column_curr(2)], [column_previous(3) column_curr(3)], 'LineWidth', 1.5, 'Color','black');
+plot3([column_previous(1) column_curr(1)], [column_previous(2) column_curr(2)], [column_previous(3) column_curr(3)], 'LineWidth', 1.5, 'Color','black');
 view(-176,77);
 xlim([-35 10]);
 ylim([-30 20]);
