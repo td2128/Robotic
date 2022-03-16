@@ -44,7 +44,7 @@ DXL_ID12                     = 12;
 DXL_ID13                     = 13;
 DXL_ID14                     = 14;
 DXL_ID15                     = 15;
-BAUDRATE                    = 1000000;
+BAUDRATE                    = 115200;
 DEVICENAME                  = 'COM6';       % Check which port is being used on your controller
                                             % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
 DEFAULT_POS = [2048,2048,2048,2048];                                            
@@ -105,7 +105,7 @@ ADDR_MAX_POS = 48;
 ADDR_MIN_POS = 52;
 
 MAX_POS_id0 = 3070; % 270
-MIN_POS_id0 = 1000;  % 90
+MIN_POS_id0 = 950;  % 90
 dxl_present_position11 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_PRESENT_POSITION);
 dxl_present_position12 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_PRESENT_POSITION);
 dxl_present_position13 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_PRESENT_POSITION);
@@ -135,7 +135,7 @@ torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TOR
 % traj = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, default1,default2,default3,default4);
 % write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
 
-cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 1);
+cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 2);
 
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
 dxl_error = getLastRxPacketError(port_num, PROTOCOL_VERSION);
@@ -147,122 +147,48 @@ elseif dxl_error ~= 0
 else
     fprintf('Dynamixel has been successfully connected \n');
 end
-
-% T_0 Matrix base frame
-%pos_1 = input('Please input desired [] position /n');
-%pos_2 = input('Please input final [] position');
-%first cube pos
-%% Need to measure location again, it is off
-centre = [-15.1663,-3.2769,8.8407];
-phi = 0;
-%% Pick up all cubes and place them
-%First cube
-%IK_start = robotic_function.robot_angle(centre,phi);
-%% Clculate all IK 
+%% 
 tf = 6;
 t = 0:1:tf;
-r = 10;
-full_traj = [];
-% angle_step = 5;
-% angle = 120;
-% start_pos = [centre(1)-r*cosd(0), centre(2)-r*sind(0), centre(3)]';
-% for i = 1:angle_step:angle
-% desired_pos = [centre(1)-r*cosd(i), centre(2)-r*sind(i), centre(3)]';
-y = 10;
-y_step = 1;
-start_pos = [centre(1), centre(2), centre(3)];
-for i = 1:y_step:y
-desired_pos = [centre(1)-i, centre(2)-i, centre(3)];
-start_ang = IK(start_pos, 0);
-desired_ang = IK(desired_pos, 0);
-theta1 = [start_ang(1), desired_ang(1)];
-theta2 = [start_ang(2), desired_ang(2)];
-theta3 = [start_ang(3), desired_ang(3)];
-theta4 = [start_ang(4), desired_ang(4)];
-theta1_traj = trajectory(theta1, t, tf);
-theta2_traj = trajectory(theta2, t, tf);
-theta3_traj = trajectory(theta3, t, tf);
-theta4_traj = trajectory(theta4, t, tf);
-full_traj = [full_traj, [theta1_traj; theta2_traj; theta3_traj; theta4_traj]];
-start_pos = desired_pos;
-end
+%% Input Coordinate
+height = 6.5;
+pos1_initial = [60,200,height];
+pos2_initial = [140,200,height];
+pos3_initial= [140,125,height];
+phi = 0;
+r_initial = 40;
+centre_initial = [100,200,8.8407];
+%% Translate it to our model
+% pos1 = [-pos1_initial(2)/10,-pos1_initial(1)/10, height];%[-20,-6,8.8407]
+% pos2 = [-pos2_initial(2)/10,-pos2_initial(1)/10, height];%[-20,-14,8.8407]
+% pos3 = [-pos3_initial(2)/10,-pos3_initial(1)/10, height];%[-12.5,-14,8.8407]
+pos1 = [-18,-6,height];
+pos2 = [-15,-16,height];
+pos3 = [-13,-13,height];
+% centre = [-centre_initial(2)/10,-centre_initial(1)/10, height];%[-20,-8,8.8407];
+% r = r_initial/10;
+%% Get all degrees for servos to draw the triangle
+% First line change in x in Ad perspective
+% [start, start_mid] = robotic_function.robot_pick_angle(pos1,0,3);
+% status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 1);
+% status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos1, pos2, 1,t,tf, 3);
+% 
+% %Second line change in y
+% status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2, pos3, 1,t,tf, 3);
+% % Final Diagonal line
+% status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos3, pos1, 1,t,tf, 3);
+% status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 1);
+%% Arc Genrate
+ centre = [-15,-16,height];
+ r = 5;
+ angle_step = 10;
+ angle = 45;
+ angle = robotic_function.robot_arc(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,centre,centre, angle, angle_step, r, t, tf);
+%% Default
+cube = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 1);
 
-x = 10;
-x_step = 1;
-for i = 1:x_step:x
-desired_pos = [centre(1)-10+i, centre(2)-10, centre(3)];
-start_ang = IK(start_pos, 0);
-desired_ang = IK(desired_pos, 0);
-theta1 = [start_ang(1), desired_ang(1)];
-theta2 = [start_ang(2), desired_ang(2)];
-theta3= [start_ang(3), desired_ang(3)];
-theta4 = [start_ang(4), desired_ang(4)];
-theta1_traj = trajectory(theta1, t, tf);
-theta2_traj = trajectory(theta2, t, tf);
-theta3_traj = trajectory(theta3, t, tf);
-theta4_traj = trajectory(theta4, t, tf);
-full_traj = [full_traj, [theta1_traj; theta2_traj; theta3_traj; theta4_traj]];
-start_pos = desired_pos;
-end
 
-y1 = 10;
-y_step = 1;
-for i = 1:y_step:y1
-desired_pos = [centre(1), centre(2)-10+i, centre(3)];
-start_ang = IK(start_pos, 0);
-desired_ang = IK(desired_pos, 0);
-theta1 = [start_ang(1), desired_ang(1)];
-theta2 = [start_ang(2), desired_ang(2)];
-theta3= [start_ang(3), desired_ang(3)];
-theta4 = [start_ang(4), desired_ang(4)];
-theta1_traj = trajectory(theta1, t, tf);
-theta2_traj = trajectory(theta2, t, tf);
-theta3_traj = trajectory(theta3, t, tf);
-theta4_traj = trajectory(theta4, t, tf);
-full_traj = [full_traj, [theta1_traj; theta2_traj; theta3_traj; theta4_traj]];
-start_pos = desired_pos;
-end
-
-theta1_draw = (full_traj(1, :) + 180)./0.088;
-theta2_draw = (full_traj(2, :) + 180)./0.088;
-theta3_draw = (-full_traj(3, :) + 180)./0.088;
-theta4_draw = (-full_traj(4, :) + 180)./0.088;
-centre1 = [-15.1663,-3.2769,15];
-IK_start = robotic_function.robot_angle(centre1,0);
- status = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_start, 1);
-for i = 1:length(theta1_draw)
-    write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, theta1_draw(i));
-    write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, theta2_draw(i));
-    write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, theta3_draw(i));
-    write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, theta4_draw(i));
-end
-%% 
-    j = 0;
-    while (j<3000)
-        j = j+1;
-
-        % Read present position
-        dxl_present_position0 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_PRESENT_POSITION);
-        dxl_present_position1 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_PRESENT_POSITION);
-
-        dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
-        
-        dxl_error = getLastRxPacketError(port_num, PROTOCOL_VERSION);
-        
-        if dxl_comm_result ~= COMM_SUCCESS
-            fprintf('%s\n', getTxRxResult(PROTOCOL_VERSION, dxl_comm_result));
-        elseif dxl_error ~= 0
-            fprintf('%s\n', getRxPacketError(PROTOCOL_VERSION, dxl_error));
-        end
-
-        if ~(abs(dxl_goal_position(index) - typecast(uint32(dxl_present_position0), 'int32')) > DXL_MOVING_STATUS_THRESHOLD)
-            break;
-        end
-
-       
-    end
-
-% Disable Dynamixel Torque
+%% Disable Dynamixel Torque
 %cube1 = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,0);
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
 dxl_error = getLastRxPacketError(port_num, PROTOCOL_VERSION);
@@ -282,50 +208,3 @@ unloadlibrary(lib_name);
 
 close all;
 %clear all;
-function  res = IK(target_end_pos, phi)
-a2 = 13;
-a3 = 12.4;
-a4 = 12.6;
-beta = atand(0.024/0.128);
-r3 = sqrt(target_end_pos(1)^2 + target_end_pos(2)^2);
-z3 = target_end_pos(3) - 7.7;
-r2 = r3 - a4*cosd(phi);
-z2 = z3 - a4*sind(phi);
-cos_theta3 = (r2^2+z2^2-a2^2-a3^2) / (2*a2*a3);
-% no solution case
-if cos_theta3 < -1 || cos_theta3 > 1
-res = 'no solution found';
-end
-theta3_temp = acosd(cos_theta3);
-theta3_temp_ = -acosd(cos_theta3);
-theta3 = theta3_temp - beta + 90;
-theta3_ = theta3_temp_ - beta + 90;
-k1 = a2 + a3 * cosd(theta3_temp) ;
-k2 = a3 * sind(theta3_temp);
-k2_ = a3 * sind(theta3_temp_);
-theta2_temp = atand(z2/r2) - atand(k2/k1);
-theta2_temp_ = atand(z2/r2) - atand(k2_/k1);
-theta2 = 90 - theta2_temp - beta;
-theta2_ = 90 - theta2_temp_ - beta;
-theta4 = phi - theta2_temp - theta3_temp;
-theta4_ = phi - theta2_temp_ - theta3_temp_;
-theta1 = atand(target_end_pos(2)/target_end_pos(1));
-theta1_ = -atand(target_end_pos(2)/target_end_pos(1));
-if theta1 == 0
-theta1 = 0;
-theta1_ = 180;
-end
-res1 = [theta1, theta2, theta3, theta4];
-res2 = [theta1, theta2_, theta3_, theta4_];
-res3 = [theta1_, theta2, theta3, theta4];
-res4 = [theta1_, theta2_, theta3_, theta4_];
-res = res2;
-end
-
-function traj = trajectory(theta, t, tf)
-a0 = theta(1);
-a1 = 0;
-a2 = (3/tf^2) * (theta(2) - theta(1));
-a3 = (-2/tf^3) * (theta(2) - theta(1));
-traj = a0 + a1 .* t + a2 .* t.^2 + a3 .* t.^3;
-end
