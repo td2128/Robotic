@@ -31,9 +31,12 @@ classdef robotic_function
             if status == 1
                 id15 = 223/0.088;
             elseif status == 2
-                id15 = 233/0.088;
+                %id15 = 233/0.088;
+                id15 = 185/0.088;
+            elseif status == 3
+                id15 = 148/0.088;
             elseif status == 0
-                id15 = 137/0.088;
+                id15 = 134/0.088;
             end
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_deg(1));
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_deg(2));
@@ -48,17 +51,21 @@ classdef robotic_function
         function status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg, status)
             %id15 = 1 close; id15 = 0 open
             if status == 1
-                id15 = 233/0.088;
+                id15 = 215/0.088;
+            elseif status == 3
+                id15 = 150/0.088;
+            elseif status == 4
+                id15 = 160/0.088;
             elseif status == 0
-                id15 = 137/0.088;
+                id15 = 135/0.088;
             end
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, IK_deg(1));
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_deg(2));
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_deg(3));
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_deg(4));
-            pause(3)
+            pause(2)
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, id15);
-            pause(2.5)
+            pause(2)
         end
 
         % status = 1, front; status = 2, down; status = 3, toward;
@@ -155,29 +162,25 @@ classdef robotic_function
                 initial_pos = start_pos;
                 start_pos1 = start_pos;
                 if x_diff < 0 && y_diff > 0
-                    y_step = y_diff / step;
-                    x_step = x_diff / step;
-                    step = y_diff / number_iteration;
+                    y_step = y_diff / number_iteration;
+                    x_step = x_diff / number_iteration;
                     x_change = x_step/y_step;
-                    traj = trajectory_degree(step, y_diff, x_change, 1, initial_pos, start_pos1, t, tf);
+                    traj = trajectory_degree(y_step, y_diff, x_change, 1, initial_pos, start_pos1, t, tf);
                 elseif x_diff < 0 && y_diff < 0
-                    y_step = y_diff / step;
-                    x_step = x_diff / step;
-                    step = y_diff / number_iteration;
+                    y_step = y_diff / number_iteration;
+                    x_step = x_diff / number_iteration;
                     x_change = x_step/y_step;
-                    traj = trajectory_degree(-step, y_diff, x_change, 1, initial_pos, start_pos1, t, tf);
+                    traj = trajectory_degree(y_step, y_diff, x_change, 1, initial_pos, start_pos1, t, tf);
                 elseif x_diff > 0 && y_diff < 0
-                    y_step = y_diff / step;
-                    x_step = x_diff / step;
-                    step = x_diff / number_iteration;
+                    y_step = y_diff / number_iteration;
+                    x_step = x_diff / number_iteration;
                     y_change = y_step/x_step;
-                    traj = trajectory_degree(step, x_diff, 1, y_change, initial_pos, start_pos1, t, tf);
+                    traj = trajectory_degree(x_step, x_diff, 1, y_change, initial_pos, start_pos1, t, tf);
                 elseif x_diff > 0 && y_diff > 0
-                    y_step = y_diff / step;
-                    x_step = x_diff / step;
-                    step = x_diff / number_iteration;
+                    y_step = y_diff / number_iteration;
+                    x_step = x_diff / number_iteration;
                     y_change = y_step/x_step;
-                    traj = trajectory_degree(step, x_diff, 1, y_change, initial_pos, start_pos1, t, tf);
+                    traj = trajectory_degree(x_step, x_diff, 1, y_change, initial_pos, start_pos1, t, tf);
                 end
             end
             theta1_traj = (traj(1, :) + 180)./0.088;
@@ -188,13 +191,15 @@ classdef robotic_function
             pause(2)
             %status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, final_mid, 1);
         end
-
-        function angle = robot_arc(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,start_pos,centre, angle, step, r, t, tf)
+        %If with other drawing, only arc = 0; otherwise only_arc = 1
+        function angle = robot_arc(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,start_pos,centre, angle, step, r, t, tf, only_arc)
             start_pos = [centre(1)+r*sind(0), centre(2)+r*cosd(0), centre(3)]';
             arc_traj = [];
             [centre_deg, centre_mid] = robot_pick_angle(centre,0,3);
             [start, start_mid] = robot_pick_angle(start_pos,0,3);
+            if only_arc == 0
             status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 1);
+            end
             status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre_mid, 1);
             status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre_deg, 1);
             status = robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre, start_pos, 1,t,tf, 2);
@@ -227,6 +232,42 @@ classdef robotic_function
 
         end
 
+        % type = 1, arc with forward and backward motion; 
+        % type = 2, horizontal sweep
+        function angle = robot_sweep(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre,r,angle,t,tf)
+                start_pos = [centre(1), centre(2)-r, centre(3)]';
+                arc_traj = [];
+                centre_deg = robot_angle(centre,0);
+                status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre_deg, 1);
+                for i = 0:10:angle
+                desired_pos = [centre(1)-r*sind(i), centre(2)-r*cosd(i), centre(3)]';
+                start_ang = IK(start_pos(1),start_pos(2),start_pos(3), 0);
+                desired_ang = IK(desired_pos(1),desired_pos(2),desired_pos(3), 0);
+                theta1 = [start_ang(1), desired_ang(1)];
+                theta2 = [start_ang(2), desired_ang(2)];
+                theta3 = [start_ang(3), desired_ang(3)];
+                theta4 = [start_ang(4), desired_ang(4)];
+                theta1_traj = trajectory(theta1, t, tf);
+                theta2_traj = trajectory(theta2, t, tf);
+                theta3_traj = trajectory(theta3, t, tf);
+                theta4_traj = trajectory(theta4, t, tf);
+                arc_traj = [arc_traj, [theta1_traj; theta2_traj; theta3_traj; theta4_traj]];
+                start_pos = desired_pos;
+                end
+                theta1_arc = (arc_traj(1, :) + 180)./0.088;
+                theta2_arc = (arc_traj(2, :) + 180)./0.088;
+                theta3_arc = (-arc_traj(3, :) + 180)./0.088;
+                theta4_arc = (-arc_traj(4, :) + 180)./0.088;
+                for i = 1:1:length(theta1_traj)
+                    write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, theta1_traj(i));
+                    write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, theta2_traj(i));
+                    write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, theta3_traj(i));
+                    write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, 195/0.088);
+                    pause(0.2)
+                    write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, 165/0.088);
+                    pause(0.2)
+                end
+        end
         function ENABLE = torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE, ENABLE)
             write1ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_TORQUE_ENABLE, ENABLE);
             write1ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_TORQUE_ENABLE, ENABLE);
@@ -426,7 +467,8 @@ end
 function status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg, status)
             %id15 = 1 close; id15 = 0 open
             if status == 1
-                id15 = 233/0.088;
+                %id15 = 233/0.088;
+                id15 = 215/0.088;
             elseif status == 0
                 id15 = 137/0.088;
             end
@@ -439,54 +481,50 @@ function status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,
             pause(2.5)
 end
 
-function status = robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_pos, end_pos, step,t,tf, status)
+function status = robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_pos, end_pos, number_iteration,t,tf, status)
             [start, start_mid] = robot_pick_angle(start_pos,0,3);
            % [final, final_mid] = robot_pick_angle(end_pos,0,3);
             %status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 1);
             status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start, 1);
             if status == 1 
                 x_diff = end_pos(status) - start_pos(status);
+                step = x_diff / number_iteration;
                 initial_pos = start_pos;
                 start_pos1 = start_pos;
-                if x_diff < 0
-                    traj = trajectory_degree(-step, x_diff, 1, 0, initial_pos, start_pos1, t, tf);
-                else
-                    traj = trajectory_degree(step, x_diff, 1, 0, initial_pos, start_pos1, t, tf);
-                end
+                traj = trajectory_degree(step, x_diff, 1, 0, initial_pos, start_pos1, t, tf);
+                
             elseif status == 2
                 y_diff = end_pos(status) - start_pos(status);
+                step = y_diff / number_iteration;
                 initial_pos = start_pos;
                 start_pos1 = start_pos;
-                if y_diff < 0
-                    traj = trajectory_degree(-step, y_diff, 0, 1, initial_pos, start_pos1, t, tf);
-                else
-                    traj = trajectory_degree(step, y_diff, 0, 1, initial_pos, start_pos1, t, tf);
-                end
+                traj = trajectory_degree(step, y_diff, 0, 1, initial_pos, start_pos1, t, tf);
+               
             elseif status == 3
                 x_diff = end_pos(1) - start_pos(1);
                 y_diff = end_pos(2) - start_pos(2);
                 initial_pos = start_pos;
                 start_pos1 = start_pos;
                 if x_diff < 0 && y_diff > 0
-                    y_step = y_diff / step;
-                    x_step = x_diff / step;
+                    y_step = y_diff / number_iteration;
+                    x_step = x_diff / number_iteration;
                     x_change = x_step/y_step;
-                    traj = trajectory_degree(step, y_diff, x_change, 1, initial_pos, start_pos1, t, tf);
+                    traj = trajectory_degree(y_step, y_diff, x_change, 1, initial_pos, start_pos1, t, tf);
                 elseif x_diff < 0 && y_diff < 0
-                    y_step = y_diff / step;
-                    x_step = x_diff / step;
+                    y_step = y_diff / number_iteration;
+                    x_step = x_diff / number_iteration;
                     x_change = x_step/y_step;
-                    traj = trajectory_degree(-step, y_diff, x_change, 1, initial_pos, start_pos1, t, tf);
+                    traj = trajectory_degree(y_step, y_diff, x_change, 1, initial_pos, start_pos1, t, tf);
                 elseif x_diff > 0 && y_diff < 0
-                    y_step = y_diff / step;
-                    x_step = x_diff / step;
+                    y_step = y_diff / number_iteration;
+                    x_step = x_diff / number_iteration;
                     y_change = y_step/x_step;
-                    traj = trajectory_degree(step, x_diff, 1, y_change, initial_pos, start_pos1, t, tf);
+                    traj = trajectory_degree(x_step, x_diff, 1, y_change, initial_pos, start_pos1, t, tf);
                 elseif x_diff > 0 && y_diff > 0
-                    y_step = y_diff / step;
-                    x_step = x_diff / step;
+                    y_step = y_diff / number_iteration;
+                    x_step = x_diff / number_iteration;
                     y_change = y_step/x_step;
-                    traj = trajectory_degree(step, x_diff, 1, y_change, initial_pos, start_pos1, t, tf);
+                    traj = trajectory_degree(x_step, x_diff, 1, y_change, initial_pos, start_pos1, t, tf);
                 end
             end
             theta1_traj = (traj(1, :) + 180)./0.088;
@@ -496,4 +534,53 @@ function status = robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,
             a = trajectory_movement(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_traj,theta2_traj,theta3_traj,theta4_traj);
             pause(2)
             %status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, final_mid, 1);
+end
+
+function angle = robot_arc(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,start_pos,centre, angle, step, r, t, tf, only_arc)
+            start_pos = [centre(1)+r*sind(0), centre(2)+r*cosd(0), centre(3)]';
+            arc_traj = [];
+            [centre_deg, centre_mid] = robot_pick_angle(centre,0,3);
+            [start, start_mid] = robot_pick_angle(start_pos,0,3);
+            if only_arc == 0
+            status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 1);
+            end
+            status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre_mid, 1);
+            status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre_deg, 1);
+            status = robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre, start_pos, 1,t,tf, 2);
+            for i = 0:step:angle
+            desired_pos = [centre(1)+r*sind(i), centre(2)+r*cosd(i), centre(3)]';
+            start_ang = IK(start_pos(1),start_pos(2),start_pos(3), 0);
+            desired_ang = IK(desired_pos(1),desired_pos(2),desired_pos(3), 0);
+            theta1 = [start_ang(1), desired_ang(1)];
+            theta2 = [start_ang(2), desired_ang(2)];
+            theta3 = [start_ang(3), desired_ang(3)];
+            theta4 = [start_ang(4), desired_ang(4)];
+            theta1_traj = trajectory(theta1, t, tf);
+            theta2_traj = trajectory(theta2, t, tf);
+            theta3_traj = trajectory(theta3, t, tf);
+            theta4_traj = trajectory(theta4, t, tf);
+            arc_traj = [arc_traj, [theta1_traj; theta2_traj; theta3_traj; theta4_traj]];
+            start_pos = desired_pos;
+            end
+            theta1_arc = (arc_traj(1, :) + 180)./0.088;
+            theta2_arc = (arc_traj(2, :) + 180)./0.088;
+            theta3_arc = (-arc_traj(3, :) + 180)./0.088;
+            theta4_arc = (-arc_traj(4, :) + 180)./0.088;
+            theta1_arc = trajectory_movement(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_arc,theta2_arc,theta3_arc,theta4_arc);
+            if angle == 180
+                status = robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, desired_pos, centre, 1,t,tf, 2);
+            else
+                status = robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, desired_pos, centre, 1,t,tf, 3);
+            end
+            status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre_mid, 1);
+
+end
+
+function IK_deg = robot_angle(pos_coordinate,phi)
+            pos_angle = IK(pos_coordinate(1),pos_coordinate(2),pos_coordinate(3),phi);
+            IK_deg1 = (pos_angle(1) + 180) / 0.088;
+            IK_deg2 = (pos_angle(2) + 180) / 0.088;
+            IK_deg3 = (-pos_angle(3) + 180) / 0.088;
+            IK_deg4 = (-pos_angle(4) + 180) / 0.088;
+            IK_deg = [IK_deg1,IK_deg2,IK_deg3,IK_deg4];
         end
