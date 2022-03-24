@@ -45,7 +45,7 @@ DXL_ID13                     = 13;
 DXL_ID14                     = 14;
 DXL_ID15                     = 15;
 BAUDRATE                    = 1000000;
-DEVICENAME                  = 'COM6';       % Check which port is being used on your controller
+DEVICENAME                  = 'COM4';       % Check which port is being used on your controller
                                             % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
 DEFAULT_POS = [2048,2048,2048,2048];                                            
 TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -123,7 +123,7 @@ mode = robotic_function.operating_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_OPER
 mode = robotic_function.drive_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_DRIVE_MODE,4);
 pause(0.5)
 % set Profile Velocity
-speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,1600,1200);
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,1400,800);
 %Enable Torque
 torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,1);
 
@@ -151,46 +151,52 @@ end
 tf = 6;
 t = 0:1:tf;
 %% Input Coordinate
-height = 5.5;
-pos1_initial = [60,200,height];
-pos2_initial = [140,200,height];
-pos3_initial= [140,125,height];
+height = 5.8;
+A_initial = [175,100,height];
+B_initial = [175,200,height];
+C_initial= [125,150,height];
+D_initial= [175,150,height];
 phi = 0;
-r_initial = 40;
-centre_initial = [100,200,8.8407];
+r_initial = 25;
+centre_initial = [175,175,height];
 %% Translate it to our model
-pos1 = [-pos1_initial(2)/10,-pos1_initial(1)/10, height];%[-20,-6,8.8407]
-pos2 = [-pos2_initial(2)/10,-pos2_initial(1)/10, height];%[-20,-14,8.8407]
-pos3 = [-pos3_initial(2)/10,-pos3_initial(1)/10, height];%[-12.5,-14,8.8407]
-pos_pick = [-23,2.6,6.1];
-% pos1 = [-18,-6,height];
-% pos2 = [-15,-16,height];
-% pos3 = [-13,-13,height];
+A = [-A_initial(2)/10,-A_initial(1)/10, height];%[-20,-6,8.8407]
+B = [-B_initial(2)/10,-B_initial(1)/10, height];%[-20,-14,8.8407]
+C = [-C_initial(2)/10,-C_initial(1)/10, height];%[-12.5,-14,8.8407]
+D = [-D_initial(2)/10,-D_initial(1)/10, height];
+pos_pick = [-22,2.2,6.1];
+iteration = 5;
 centre = [-centre_initial(2)/10,-centre_initial(1)/10, height];%[-20,-8,8.8407];
 r = r_initial/10;
 %% Get all degrees for servos to draw the triangle
 %First line change in x in Ad perspective
-[start, start_mid] = robotic_function.robot_pick_angle(pos1,0,3);
-[pick_deg,pick_mid] = robotic_function.robot_pick_angle(pos_pick,0,10);
-status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 0);
-status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_deg, 1);
-status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 1);
-
+ [start, start_mid] = robotic_function.robot_pick_angle(A,0,3);
+ [pick_deg,pick_mid] = robotic_function.robot_pick_angle(pos_pick,0,10);
+ status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 0);
+ status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_deg, 1);
+ status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 1);
+% 
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 1);
-status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos1, pos2, 1,t,tf, 2);
+status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, A, B, iteration,t,tf, 1);
 
 %Second line change in y
-status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2, pos3, 1,t,tf, 1);
+status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, B, C, iteration,t,tf, 3);
 % Final Diagonal line
-status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos3, pos1, 1,t,tf, 3);
+status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, C, D, iteration,t,tf, 2);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 1);
 %% Arc Genrate
 %  centre = [-15,-16,height];
 angle_step = 10;
-angle = 180;
-angle = robotic_function.robot_arc(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,centre,centre, angle, angle_step, r, t, tf,1);
+angle = 270;
+%pause(0.5)
+angle = robotic_function.robot_arc(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,D,centre, angle, angle_step, r, t, tf);
 %% Default
-cube = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 1);
+pos_drop = [-21,3,6.1];
+[drop_deg,drop_mid] = robotic_function.robot_pick_angle(pos_drop,0,10);
+status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop_mid, 1);
+status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop_deg, 0);
+status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop_mid, 0);
+cube = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
 
 
 %% Disable Dynamixel Torque

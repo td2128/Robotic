@@ -8,34 +8,36 @@ t = 0:1:tf;
 full_traj = [];
 %%
 height = 8.8407;
-pos1_initial = [60,200,height];
-pos2_initial = [140,200,height];
-pos3_initial= [140,125,height];
+A_initial = [175,100,height];
+B_initial = [175,200,height];
+C_initial= [125,150,height];
+D_initial= [175,150,height];
 phi = 0;
-r_initial = 40;
-centre_initial = [100,200,8.8407];
+%r_initial = 40;
+centre_initial = [175,175,height];
 %% Translate it to our model
-pos1 = [-pos1_initial(2)/10,-pos1_initial(1)/10, height];%[-20,-6,8.8407]
-pos2 = [-pos2_initial(2)/10,-pos2_initial(1)/10, height];%[-20,-14,8.8407]
-pos3 = [-pos3_initial(2)/10,-pos3_initial(1)/10, height];%[-12.5,-14,8.8407]
-% centre = [-centre_initial(2)/10,-centre_initial(1)/10, height];%[-20,-8,8.8407];
+A = [-A_initial(2)/10,-A_initial(1)/10, height];%[-20,-6,8.8407]
+B = [-B_initial(2)/10,-B_initial(1)/10, height];%[-20,-14,8.8407]
+C = [-C_initial(2)/10,-C_initial(1)/10, height];%[-12.5,-14,8.8407]
+D = [-D_initial(2)/10,-D_initial(1)/10, height];
+centre = [-centre_initial(2)/10,-centre_initial(1)/10, height];%[-20,-8,8.8407];
 % r = r_initial/10;
 %% 
-%full_traj = robot_line(pos1, pos2, 1,t,tf, 2);
-%full_traj = robot_line(pos2, pos3, 1,t,tf, 1);
-% full_traj = robot_line(pos3, pos1, 1,t,tf, 3);
-angle = 150;
+full_traj1 = robot_line(A, B,10, 1,t,tf, 2);
+full_traj2 = robot_line(B, C, 10,1,t,tf, 3);
+full_traj3 = robot_line(C, D, 10,1,t,tf, 2);
+full_traj = [full_traj1,full_traj2,full_traj3];
+angle = 270;
 step = 10;
-centre = [15,16,6];
-r = 15;
-%full_traj = robot_arc(centre, angle, step, r, t, tf);
-full_traj = robot_sweep(centre,r,angle,t,tf,1);
+r = 2.5;
+full_traj = robot_arc(centre, angle, step, r, t, tf);
+%full_traj = robot_sweep(centre,r,angle,t,tf,1);
 %% 
 function arc_traj = robot_sweep(centre,r,angle,t,tf,type)
             if type == 1
-                start_pos = [centre(1), centre(2)+r, centre(3)]';
+                start_pos = [centre(1)+r*sind(30), centre(2)+r*cosd(30), centre(3)]';
                 arc_traj = [];
-                for i = 0:10:angle
+                for i = 30:10:angle
                 desired_pos = [centre(1)+r*sind(i), centre(2)+r*cosd(i), centre(3)]';
                 start_ang = IK(start_pos(1),start_pos(2),start_pos(3), 0);
                 desired_ang = IK(desired_pos(1),desired_pos(2),desired_pos(3), 0);

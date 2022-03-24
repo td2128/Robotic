@@ -44,7 +44,7 @@ DXL_ID12                     = 12;
 DXL_ID13                     = 13;
 DXL_ID14                     = 14;
 DXL_ID15                     = 15;
-BAUDRATE                    = 115200;
+BAUDRATE                    = 1000000;
 DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
                                             % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
                                             
@@ -216,8 +216,8 @@ IK2_mid2 = (mid_pos2(2) + 180) / 0.088;
 IK2_mid3 = (-mid_pos2(3) + 180) / 0.088;
 IK2_mid4 = (-mid_pos2(4) + 180) / 0.088;
 
-pos_3 = [-14.4,-14.2,5];
-pos_31 = [-14.6,-14.4,5];
+pos_3 = [-14.4,-14.2,6.5];
+pos_31 = [-14.6,-14.4,6.5];
 target_pos3 = IK(pos_3(1), pos_3(2),pos_3(3)+3,-85);
 mid_pos3 = IK(pos_3(1), pos_3(2),pos_3(3)+6,-85);
 mid_pos31 = IK(pos_31(1), pos_31(2),pos_31(3)+4,0);

@@ -45,7 +45,7 @@ DXL_ID13                     = 13;
 DXL_ID14                     = 14;
 DXL_ID15                     = 15;
 BAUDRATE                    = 1000000;
-DEVICENAME                  = 'COM10';       % Check which port is being used on your controller
+DEVICENAME                  = 'COM4';       % Check which port is being used on your controller
                                             % ex) Windows: 'COM1'   Linux: '/dev/ttyUSB0' Mac: '/dev/tty.usbserial-*'
 DEFAULT_POS = [2048,2048,2048,2048];                                            
 TORQUE_ENABLE               = 1;            % Value for enabling the torque
@@ -135,7 +135,7 @@ torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TOR
 % traj = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, default1,default2,default3,default4);
 % write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
 
-cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
+%cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
 
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
 dxl_error = getLastRxPacketError(port_num, PROTOCOL_VERSION);
@@ -153,36 +153,23 @@ end
 %pos_2 = input('Please input final [] position');
 %first cube pos
 %% Need to measure location again, it is off
-pos1 = [-7.6,20.6,5.0];
-pos2 = [-12.8,12.8,5.2];
+pos1 = [-17.3,17.7,6.1];
+pos2 = [-17.5,-5,5.4];
 %pos1_2 = [-22.2,0,8];
 %second cube pos
-pos3 = [-22.9,0,5.2];
-pos4 = [-10.5,0,5.5];
+pos3 = [0,17.5,6.3];
+pos4 = [0,-15,5.5];
 %third cube pos
-%pos5 = [-15.3,-15.3,6.5];
-pos5 = [-15.6,-15.6,4.4];
-pos6 = [0,10.4,5.5];
+pos5 = [-10, 0,5.6];
+pos6 = [-22.5,0,4.9];
 phi = -80;
-pos_mid = [-15.6,-15.6,7.6];
 %% Pick up all cubes and place them
-%First cube
-[IK1_start_deg, IK1_mid_deg] = robotic_function.robot_pick_angle(pos1,phi,3);
-[IK1_end_deg, IK1_transit_deg] = robotic_function.robot_pick_angle(pos2,phi,3);
-%IK1_2_deg = robotic_function.robot_angle(pos1_2,phi);
-%Second cube
-[IK2_start_deg, IK2_mid_deg] = robotic_function.robot_pick_angle(pos3,phi,2);
-[IK2_end_deg, IK2_transit_deg] = robotic_function.robot_pick_angle(pos4,phi,3);
-IK = robotic_function.robot_angle(pos_mid,0);
-%Third cube
-[IK3_start_deg, IK3_mid_deg] = robotic_function.robot_pick_angle(pos5,phi,3);
-[IK3_end_deg, IK3_transit_deg] = robotic_function.robot_pick_angle(pos6,phi,3);
+%First
 %% Normal Operation with linear velocity
-status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2,6,1.1,-0.8,1.9,-80,0,1);
-status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos3,2.5,1.2,0.3,-0.3,-80,0,2);
-default = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,IK ,0);
-status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos5,3,-0.1,-0.1,0.2,0,-75,3);
-default = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS,0);
+%status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos1,1,0,0,0,0,-80,3);
+status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2,5,0.4,0.7,1.5,-80,0,2);
+status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos3,3,0,-0.5,0.7,-80,0,1);
+% default = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS,0);
 %% 
 % % trajectory trial
 %From default to first cube
@@ -214,30 +201,7 @@ default = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_
 %%status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2, 1);
 
 %% 
-    j = 0;
-    while (j<3000)
-        j = j+1;
-
-        % Read present position
-        dxl_present_position0 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_PRESENT_POSITION);
-        dxl_present_position1 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_PRESENT_POSITION);
-
-        dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
-        
-        dxl_error = getLastRxPacketError(port_num, PROTOCOL_VERSION);
-        
-        if dxl_comm_result ~= COMM_SUCCESS
-            fprintf('%s\n', getTxRxResult(PROTOCOL_VERSION, dxl_comm_result));
-        elseif dxl_error ~= 0
-            fprintf('%s\n', getRxPacketError(PROTOCOL_VERSION, dxl_error));
-        end
-
-        if ~(abs(dxl_goal_position(index) - typecast(uint32(dxl_present_position0), 'int32')) > DXL_MOVING_STATUS_THRESHOLD)
-            break;
-        end
-
-       
-    end
+   
 
 % Disable Dynamixel Torque
 %cube1 = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,0);
