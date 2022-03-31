@@ -104,8 +104,8 @@ end
 ADDR_MAX_POS = 48;
 ADDR_MIN_POS = 52;
 
-MAX_POS_id0 = 3070; % 270
-MIN_POS_id0 = 950;  % 90
+MAX_POS_id0 = 3200; % 270
+MIN_POS_id0 = 600;  % 90
 dxl_present_position11 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_PRESENT_POSITION);
 dxl_present_position12 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_PRESENT_POSITION);
 dxl_present_position13 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_PRESENT_POSITION);
@@ -128,13 +128,6 @@ speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PRO
 torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,1);
 
 %Default position for all servos
-% default1 = robotic_function.trajectory([dxl_present_position11,180/0.088],5);
-% default2 = robotic_function.trajectory([dxl_present_position12,180/0.088],5);
-% default3 = robotic_function.trajectory([dxl_present_position13,180/0.088],5);
-% default4 = robotic_function.trajectory([dxl_present_position14,180/0.088],5);
-% traj = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, default1,default2,default3,default4);
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
-
 % cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
 
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
@@ -172,6 +165,7 @@ r = r_initial/10;
 %First line change in x in Ad perspective
  [start, start_mid] = robotic_function.robot_pick_angle(A,0,3);
  [pick_deg,pick_mid] = robotic_function.robot_pick_angle(pos_pick,0,10);
+ %pick pen up
  status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 0);
  status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_deg, 1);
  status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 1);
@@ -192,6 +186,7 @@ speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PRO
 angle = robotic_function.robot_arc(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,D,centre, angle, angle_step, r, t, tf);
 %% Default
 pos_drop = [-21.5,2.8,6.1];
+%drop pen back
 [drop_deg,drop_mid] = robotic_function.robot_pick_angle(pos_drop,0,10);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop_mid, 1);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop_deg, 0);

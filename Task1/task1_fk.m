@@ -107,8 +107,8 @@ end
 ADDR_MAX_POS = 48;
 ADDR_MIN_POS = 52;
 
-MAX_POS_id0 = 3070; % 270
-MIN_POS_id0 = 1068;  % 90
+MAX_POS_id0 = 3400; % 270
+MIN_POS_id0 = 600;  % 90
 
 % Set max pos limit
 write4ByteTxRx(port_num,PROTOCOL_VERSION,DXL_ID11,ADDR_MAX_POS,MAX_POS_id0);

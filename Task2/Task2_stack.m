@@ -119,12 +119,13 @@ mode = robotic_function.operating_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_OPER
 mode = robotic_function.drive_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_DRIVE_MODE,4);
 pause(0.5)
 % set Profile Velocity
-speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,900,600);
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,1100,600);
 %Enable Torque
 torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,1);
 
 %Default position for all servos
-% cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0)
+
+% cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
 
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
 dxl_error = getLastRxPacketError(port_num, PROTOCOL_VERSION);
@@ -137,51 +138,16 @@ else
     fprintf('Dynamixel has been successfully connected \n');
 end
 
-%% pick and drop coordinates
-pos1 = [-17.5,17.5,6.9];
-pos2 = [-17.5,-5,6.3];
-pos3 = [0,-17.5,6.3];
-pos4 = [0,14.7,5.5];
-pos5 = [-9.9,9.9,6];
-pos6 = [-22.3,0,6.9];
-phi = -80;
+%% three positions of cubes
+pos1 = [-17.3,17.7,5.4];
+pos2 = [-17.5,-5,5.7];
+pos3 = [0,16.5,4.5];
 %% Pick up all cubes and place them
-%First cube
-[IK1_start_deg, IK1_mid_deg] = robotic_function.robot_pick_angle(pos1,-70,3);
-[IK1_end_deg, IK1_transit_deg] = robotic_function.robot_pick_angle_y(pos4,-70,3);
-%Second cube
-[IK2_start_deg, IK2_mid_deg] = robotic_function.robot_pick_angle(pos2,phi,3);
-[IK2_end_deg, IK2_transit_deg] = robotic_function.robot_pick_angle(pos5,phi,3);
-
-%Third cube
-[IK3_start_deg, IK3_mid_deg] = robotic_function.robot_pick_angle_y(pos3,phi,3);
-[IK3_end_deg, IK3_transit_deg] = robotic_function.robot_pick_angle(pos6,phi,3);
-%% Normal Operation with linear velocity
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_mid_deg,0);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_start_deg,1);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_mid_deg,1);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_transit_deg,1);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_end_deg,0);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_transit_deg,0);
-
-cube2 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_mid_deg,0);
-cube2 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_start_deg,1);
-cube2 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_mid_deg,1);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_transit_deg,1)
-cube2 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_end_deg,0);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_transit_deg,0);
-
-
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_mid_deg,0);
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_start_deg,1);
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_mid_deg,1);
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_transit_deg,1);
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_end_deg,0);
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_transit_deg,0);
-
-default = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS,0);
+number = robotic_function.robot_stack(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2, [pos3(1),pos3(2)-0.1, pos3(3) ], 1, 1);
+status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos1,3,-0,0,0.5,0,-60,3);
+number = robotic_function.robot_stack(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, [pos1(1)+0.2, pos1(2)-0.2, pos1(3) + 0.7], [pos3(1),pos3(2)+1.6, pos3(3) ], 2, 2);
 %% 
-  
+
 % Disable Dynamixel Torque
 %cube1 = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,0);
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);

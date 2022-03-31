@@ -104,8 +104,8 @@ end
 ADDR_MAX_POS = 48;
 ADDR_MIN_POS = 52;
 
-MAX_POS_id0 = 3070; % 270
-MIN_POS_id0 = 950;  % 90
+MAX_POS_id0 = 3300; % 270
+MIN_POS_id0 = 600;  % 90
 dxl_present_position11 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_PRESENT_POSITION);
 dxl_present_position12 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_PRESENT_POSITION);
 dxl_present_position13 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_PRESENT_POSITION);

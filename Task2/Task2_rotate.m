@@ -104,12 +104,8 @@ end
 ADDR_MAX_POS = 48;
 ADDR_MIN_POS = 52;
 
-MAX_POS_id0 = 3070; % 270
-MIN_POS_id0 = 1068;  % 90
-dxl_present_position11 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_PRESENT_POSITION);
-dxl_present_position12 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_PRESENT_POSITION);
-dxl_present_position13 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_PRESENT_POSITION);
-dxl_present_position14 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID14, ADDR_PRO_PRESENT_POSITION);
+MAX_POS_id0 = 3300; % 270
+MIN_POS_id0 = 800;  % 90
 
 % Set max pos limit
 max = robotic_function.max_pos_limit(port_num,PROTOCOL_VERSION,ADDR_MAX_POS,MAX_POS_id0);
@@ -128,13 +124,6 @@ speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PRO
 torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,1);
 
 %Default position for all servos
-% default1 = robotic_function.trajectory([dxl_present_position11,180/0.088],5);
-% default2 = robotic_function.trajectory([dxl_present_position12,180/0.088],5);
-% default3 = robotic_function.trajectory([dxl_present_position13,180/0.088],5);
-% default4 = robotic_function.trajectory([dxl_present_position14,180/0.088],5);
-% traj = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, default1,default2,default3,default4);
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
-
 %cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
 
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
@@ -148,57 +137,17 @@ else
     fprintf('Dynamixel has been successfully connected \n');
 end
 
-% T_0 Matrix base frame
-%pos_1 = input('Please input desired [] position /n');
-%pos_2 = input('Please input final [] position');
-%first cube pos
-%% Need to measure location again, it is off
+%%Cube coordinates
 pos1 = [-17.3,17.7,6.1];
 pos2 = [-17.5,-5,5.8];
-%pos1_2 = [-22.2,0,8];
-%second cube pos
 pos3 = [0,17.5,5.6];
-
 phi = -80;
-%% Pick up all cubes and place them
-%First
 %% Normal Operation with linear velocity
 status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos1,3,-0.3,0.3,0,0,-60,3);
 status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2,5,0.8,0.3,1.2,-80,0,2);
 status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos3,3,0,-0.9,1.4,-80,0,1);
-% default = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS,0);
+default = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS,0);   
 %% 
-% % trajectory trial
-%From default to first cube
-% tf = 5;
-% tf_small = 1;
-% theta1_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(1)],tf);
-% theta2_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(2)],tf);
-% theta3_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(3)],tf);
-% theta4_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(4)],tf);
-% traj1 = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_1,theta2_1,theta3_1,theta4_1);
-% pause(3)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 215/0.088);
-% pause(2)
-% theta1_11 = robotic_function.trajectory([IK1_start_deg(1),IK1_mid_deg(1)],tf_small);
-% theta2_11 = robotic_function.trajectory([IK1_start_deg(2),IK1_mid_deg(2)],tf_small);
-% theta3_11 = robotic_function.trajectory([IK1_start_deg(3),IK1_mid_deg(3)],tf_small);
-% theta4_11 = robotic_function.trajectory([IK1_start_deg(4),IK1_mid_deg(4)],tf_small);
-% traj2 = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_11,theta2_11,theta3_11,theta4_11);
-% pause(3)
-% theta1_111 = robotic_function.trajectory([IK1_mid_deg(1),IK1_end_deg(1)],tf_small);
-% theta2_111 = robotic_function.trajectory([IK1_mid_deg(2),IK1_end_deg(2)],tf_small);
-% theta3_111 = robotic_function.trajectory([IK1_mid_deg(3),IK1_end_deg(3)],tf_small);
-% theta4_111 = robotic_function.trajectory([IK1_mid_deg(4),IK1_end_deg(4)],tf_small);
-% traj3 = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_111,theta2_111,theta3_111,theta4_111);
-% pause(3)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
-% pause(2)
-%% Rotation
-%%status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2, 1);
-
-%% 
-   
 
 % Disable Dynamixel Torque
 %cube1 = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,0);
