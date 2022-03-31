@@ -104,8 +104,8 @@ end
 ADDR_MAX_POS = 48;
 ADDR_MIN_POS = 52;
 
-MAX_POS_id0 = 3300; % 270
-MIN_POS_id0 = 800;  % 90
+MAX_POS_id0 = 3070; % 270
+MIN_POS_id0 = 950;  % 90
 dxl_present_position11 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_PRESENT_POSITION);
 dxl_present_position12 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_PRESENT_POSITION);
 dxl_present_position13 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_PRESENT_POSITION);
@@ -117,18 +117,15 @@ max = robotic_function.max_pos_limit(port_num,PROTOCOL_VERSION,ADDR_MAX_POS,MAX_
 MIN = robotic_function.min_pos_limit(port_num,PROTOCOL_VERSION,ADDR_MIN_POS,MIN_POS_id0);
 % Put actuator into Position Control Mode
 mode = robotic_function.operating_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_OPERATING_MODE, 3);
-%Enable Torque
-%torque_disbale = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,0);
 % Drive mode
 mode = robotic_function.drive_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_DRIVE_MODE,4);
 pause(0.5)
 % set Profile Velocity
-speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,900,600);
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,1200,1000);
 %Enable Torque
 torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,1);
 
-%Default position for all servos
-% cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0)
+cube = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
 
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
 dxl_error = getLastRxPacketError(port_num, PROTOCOL_VERSION);
@@ -140,87 +137,96 @@ elseif dxl_error ~= 0
 else
     fprintf('Dynamixel has been successfully connected \n');
 end
+%% Angry
+%angry book
+pos1 = [-12.3,-12.5,3.8];
+drop11 = [-15.2,-15.2,3.1];
+drop14 = [-16.9,-16.9,2.6];
+drop12 = [-16.2,-14.4,0.8];
+drop13 = [-17.8,-16.8,0.8];
 
-% T_0 Matrix base frame
-%pos_1 = input('Please input desired [] position /n');
-%pos_2 = input('Please input final [] position');
-%first cube pos
-%% Need to measure location again, it is off
-pos1 = [-17.5,17.5,6.9];
-pos2 = [-17.5,-5,6.3];
-pos3 = [0,-17.5,6.3];
-pos4 = [0,14.7,5.5];
-pos5 = [-9.9,9.9,6];
-pos6 = [-22.3,0,6.9];
-phi = -80;
-%% Pick up all cubes and place them
-%First cube
-[IK1_start_deg, IK1_mid_deg] = robotic_function.robot_pick_angle(pos1,-70,3);
-[IK1_end_deg, IK1_transit_deg] = robotic_function.robot_pick_angle_y(pos4,-70,3);
-%Second cube
-[IK2_start_deg, IK2_mid_deg] = robotic_function.robot_pick_angle(pos2,phi,3);
-[IK2_end_deg, IK2_transit_deg] = robotic_function.robot_pick_angle(pos5,phi,3);
+[pick1_deg, pick1_mid] = robotic_function.robot_pick_angle(pos1,-90,3);
+[drop11_deg,drop11_mid] = robotic_function.robot_pick_angle(drop11,-10,10);
+[drop12_deg,drop12_mid] = robotic_function.robot_pick_angle(drop12,-20,5);
+[drop13_deg,drop13_mid] = robotic_function.robot_pick_angle(drop13,-20,5);
+drop14_deg = robotic_function.robot_angle(drop14,-10);
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,600,300);
+status1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick1_mid, 0);
+status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick1_deg, 5);
+status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick1_mid, 5);
 
-%Third cube
-[IK3_start_deg, IK3_mid_deg] = robotic_function.robot_pick_angle_y(pos3,phi,3);
-[IK3_end_deg, IK3_transit_deg] = robotic_function.robot_pick_angle(pos6,phi,3);
-%% Normal Operation with linear velocity
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_mid_deg,0);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_start_deg,1);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_mid_deg,1);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_transit_deg,1);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_end_deg,0);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK1_transit_deg,0);
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, 135/0.088);
+pause(0.08)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 135/0.088);
+pause(1)
+% Angry water mode
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,1000,900);
+pos1 = [0,-19.5,7];
+[water_deg, water_mid] = robotic_function.robot_pick_angle(pos1,0,9);
+pos_smash = [-18,0,13];
+smash_deg = robotic_function.robot_angle(pos_smash,0);
+pos2 = [-9.2,20.2,5.9];
+[plant_deg1,plant_mid1] = robotic_function.robot_pick_angle(pos2,-80,2);
+pos3 = [-7.7,13,15];
+plant_deg2 = robotic_function.robot_angle(pos3,0);
+pour_deg1 = robotic_function.robot_angle(pos2,-30);
+pour_deg2 = robotic_function.robot_angle(pos2,-50);
+status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, plant_mid1, 0);
+status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, plant_deg1, 4);
+status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, plant_deg2, 4);
+status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, water_mid, 0);
 
-cube2 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_mid_deg,0);
-cube2 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_start_deg,1);
-cube2 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_mid_deg,1);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_transit_deg,1)
-cube2 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_end_deg,0);
-cube1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK2_transit_deg,0);
+%Angry Trash
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,600,300);
+pos_pick = [-13.1,7,1.85];
+[pick_deg, pick_mid] = robotic_function.robot_pick_angle(pos_pick,-85,8);
+%high up, crawl together
+pos_ready = [-2,12.6,30];
+% another 2 angles or ratating and pretend to aim
+pos_aim1 = [3,13,30];
+pos_aim2 = [-6,7.3,32.3];
+%extend with a phi of 30
+pos_throw = [-21,-7.9,37.3];
+ready_deg = robotic_function.robot_angle(pos_ready,90);
+aim_deg1 = robotic_function.robot_angle(pos_aim1,90);
+aim_deg2 = robotic_function.robot_angle(pos_aim2,90);
+throw_deg = robotic_function.robot_angle(pos_throw,50);
+
+status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 0);
+status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_deg, 6);
+status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 6);
+
+%pick
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, ready_deg(1));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, ready_deg(2));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, ready_deg(3));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, ready_deg(4));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 194/0.088);
+pause(3)
+%"aim"
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, aim_deg1(1));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, aim_deg1(2));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, aim_deg1(3));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, aim_deg1(4));
+pause(2)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, aim_deg2(1));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, aim_deg2(2));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, aim_deg2(3));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, aim_deg2(4));
+pause(3)
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,300,100);
+%throw
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, throw_deg(1));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, throw_deg(2));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, throw_deg(3));
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, throw_deg(4));
+pause(0.03)
+write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 135/0.088);
+%% Default
+cube = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
 
 
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_mid_deg,0);
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_start_deg,1);
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_mid_deg,1);
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_transit_deg,1);
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_end_deg,0);
-cube3 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK3_transit_deg,0);
-
-default = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS,0);
-%% 
-% % trajectory trial
-%From default to first cube
-% tf = 5;
-% tf_small = 1;
-% theta1_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(1)],tf);
-% theta2_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(2)],tf);
-% theta3_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(3)],tf);
-% theta4_1 = robotic_function.trajectory([180/0.088,IK1_start_deg(4)],tf);
-% traj1 = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_1,theta2_1,theta3_1,theta4_1);
-% pause(3)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 215/0.088);
-% pause(2)
-% theta1_11 = robotic_function.trajectory([IK1_start_deg(1),IK1_mid_deg(1)],tf_small);
-% theta2_11 = robotic_function.trajectory([IK1_start_deg(2),IK1_mid_deg(2)],tf_small);
-% theta3_11 = robotic_function.trajectory([IK1_start_deg(3),IK1_mid_deg(3)],tf_small);
-% theta4_11 = robotic_function.trajectory([IK1_start_deg(4),IK1_mid_deg(4)],tf_small);
-% traj2 = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_11,theta2_11,theta3_11,theta4_11);
-% pause(3)
-% theta1_111 = robotic_function.trajectory([IK1_mid_deg(1),IK1_end_deg(1)],tf_small);
-% theta2_111 = robotic_function.trajectory([IK1_mid_deg(2),IK1_end_deg(2)],tf_small);
-% theta3_111 = robotic_function.trajectory([IK1_mid_deg(3),IK1_end_deg(3)],tf_small);
-% theta4_111 = robotic_function.trajectory([IK1_mid_deg(4),IK1_end_deg(4)],tf_small);
-% traj3 = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_111,theta2_111,theta3_111,theta4_111);
-% pause(3)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
-% pause(2)
-%% Rotation
-%%status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2, 1);
-
-%% 
-  
-% Disable Dynamixel Torque
+%% Disable Dynamixel Torque
 %cube1 = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,0);
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
 dxl_error = getLastRxPacketError(port_num, PROTOCOL_VERSION);
@@ -240,7 +246,5 @@ unloadlibrary(lib_name);
 
 close all;
 %clear all;
-
-
 
 

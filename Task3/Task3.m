@@ -123,7 +123,7 @@ mode = robotic_function.operating_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_OPER
 mode = robotic_function.drive_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_DRIVE_MODE,4);
 pause(0.5)
 % set Profile Velocity
-speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,1400,800);
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,700,400);
 %Enable Torque
 torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,1);
 
@@ -135,7 +135,7 @@ torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TOR
 % traj = robotic_function.robot_traj(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, default1,default2,default3,default4);
 % write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 137/0.088);
 
-cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
+% cube = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
 
 dxl_comm_result = getLastTxRxResult(port_num, PROTOCOL_VERSION);
 dxl_error = getLastRxPacketError(port_num, PROTOCOL_VERSION);
@@ -164,7 +164,7 @@ A = [-A_initial(2)/10,-A_initial(1)/10, height];%[-20,-6,8.8407]
 B = [-B_initial(2)/10,-B_initial(1)/10, height];%[-20,-14,8.8407]
 C = [-C_initial(2)/10,-C_initial(1)/10, height];%[-12.5,-14,8.8407]
 D = [-D_initial(2)/10,-D_initial(1)/10, height];
-pos_pick = [-22,2.2,6.1];
+pos_pick = [-22,2.2,6.5];
 iteration = 5;
 centre = [-centre_initial(2)/10,-centre_initial(1)/10, height];%[-20,-8,8.8407];
 r = r_initial/10;
@@ -183,20 +183,20 @@ status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_P
 status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, B, C, iteration,t,tf, 3);
 % Final Diagonal line
 status = robotic_function.robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, C, D, iteration,t,tf, 2);
-status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 1);
 %% Arc Genrate
 %  centre = [-15,-16,height];
 angle_step = 10;
 angle = 270;
 %pause(0.5)
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,300,400);
 angle = robotic_function.robot_arc(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,D,centre, angle, angle_step, r, t, tf);
 %% Default
-pos_drop = [-21,3,6.1];
+pos_drop = [-21.5,2.8,6.1];
 [drop_deg,drop_mid] = robotic_function.robot_pick_angle(pos_drop,0,10);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop_mid, 1);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop_deg, 0);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop_mid, 0);
-cube = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
+% cube = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
 
 
 %% Disable Dynamixel Torque

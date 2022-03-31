@@ -76,7 +76,7 @@ classdef robotic_function
             elseif status == 3%water bottle
                 id15 = 150/0.088;
             elseif status == 4
-                id15 = 160/0.088;% water bottle angry
+                id15 = 165/0.088;% water bottle angry
             elseif status == 0
                 id15 = 130/0.088;
             end
@@ -97,18 +97,21 @@ classdef robotic_function
             [rotate_deg, rotate_mid] = robot_pick_angle(drop_pos,drop_phi,height);
 
             if status == 1
-                status = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg, 1);
+               status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid, 0);
+                status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg, 1);
                 status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid, 1);
                 write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, 95/0.088);
                 pause(1)
                 status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, rotate_deg, 0);
                 status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, rotate_mid, 0);
             elseif status ==2
+                status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid, 0);
                 status = robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg, 1);
                 status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid, 1);
                 write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, 95/0.088);
                 pause(1)
                 status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, rotate_deg, 0);
+                status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, rotate_mid, 0);
                 status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid, 0);
                 status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_deg, 1);
                 status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, IK_mid, 1);
@@ -127,6 +130,7 @@ classdef robotic_function
                 status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, rotate_mid, 0);
             end
         end
+
         
         % pos2 is the position where cube is placed
         % rotate means whether it needs to be rotated or not
@@ -140,15 +144,18 @@ classdef robotic_function
             elseif rotate == 1
                 pick_phi = -85;
                 drop_phi = 0;
+            elseif rotate == 2
+                pick_phi = 0;
+                drop_phi = -80;
             end
             if number == 1
-                cube = 3;
+                cube = 2.6;
             elseif number == 2
-                cube = 5;
+                cube = 6.5;
             end
             pos_end = [pos2(1), pos2(2),pos2(3) + cube];
-            [start, start_mid] = robot_pick_angle(pos1,pick_phi,1);
-            [final, final_mid] = robot_pick_angle(pos_end,drop_phi,1);
+            [start, start_mid] = robot_pick_angle(pos1,pick_phi,3);
+            [final, final_mid] = robot_pick_angle(pos_end,drop_phi,3);
             status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 0);
             status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start, 1);
             status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 1);
@@ -227,9 +234,7 @@ classdef robotic_function
             [centre_deg, centre_mid] = robot_pick_angle(centre,0,3);
             [start, start_mid] = robot_pick_angle(start_pos,0,3);
             
-            status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre_mid, 1);
-            status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre_deg, 1);
-            status = robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre, start_pos, 5,t,tf, 1);
+            status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_mid, 1);
             for i = 0:step:angle
             desired_pos = [centre(1)+r*cosd(i), centre(2)+r*sind(i), centre(3)]';
             start_ang = IK(start_pos(1),start_pos(2),start_pos(3), 0);
@@ -251,6 +256,7 @@ classdef robotic_function
             theta3_arc = (-arc_traj(3, :) + 180)./0.088;
             theta4_arc = (-arc_traj(4, :) + 180)./0.088;
             theta1_arc = trajectory_movement(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, theta1_arc,theta2_arc,theta3_arc,theta4_arc);
+            pause(1)
             status1 = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, mid, 1);          
 
         end
@@ -554,9 +560,9 @@ function status = robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION,
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, IK_deg(2));
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, IK_deg(3));
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, IK_deg(4));
-            pause(3)
+            pause(2)
             write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, id15);
-            pause(2.5)
+            pause(1)
 end
 
 function status = robot_line(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, start_pos, end_pos, number_iteration,t,tf, status)

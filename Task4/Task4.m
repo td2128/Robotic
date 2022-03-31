@@ -104,8 +104,8 @@ end
 ADDR_MAX_POS = 48;
 ADDR_MIN_POS = 52;
 
-MAX_POS_id0 = 3070; % 270
-MIN_POS_id0 = 950;  % 90
+MAX_POS_id0 = 3500; % 270
+MIN_POS_id0 = 500;  % 90
 dxl_present_position11 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID11, ADDR_PRO_PRESENT_POSITION);
 dxl_present_position12 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID12, ADDR_PRO_PRESENT_POSITION);
 dxl_present_position13 = read4ByteTxRx(port_num, PROTOCOL_VERSION, DXL_ID13, ADDR_PRO_PRESENT_POSITION);
@@ -123,7 +123,7 @@ mode = robotic_function.operating_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_OPER
 mode = robotic_function.drive_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_DRIVE_MODE,4);
 pause(0.5)
 % set Profile Velocity
-speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,1200,1000);
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,900,600);
 %Enable Torque
 torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,1);
 
@@ -142,8 +142,8 @@ end
 
 %% Book shelf
 %book diagonal(Tim)
-pos1 = [-12.5,-12.7,3.8];
-drop11 = [-14,-14,2.9];
+pos1 = [-12.5,-12.7,6];
+drop11 = [-13.5,-13.5,2.9];
 drop14 = [-17.2,-17.2,2.6];
 drop12 = [-15,-13.2,0.8];
 drop13 = [-17.8,-16.8,0.8];
@@ -154,7 +154,7 @@ drop13 = [-17.8,-16.8,0.8];
 [drop13_deg,drop13_mid] = robotic_function.robot_pick_angle(drop13,-20,5);
 drop14_deg = robotic_function.robot_angle(drop14,-10);
 
-% %status1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick1_mid, 0);
+%status1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick1_mid, 0);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick1_deg, 5);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick1_mid, 5);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop11_mid, 5);
@@ -166,8 +166,8 @@ status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop12_deg, 0);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop11_mid, 0);
 
-drop21 = [-14,-14,4];
-drop24 = [-17.2,-17.2,3];
+drop21 = [-14,-14,5];
+drop24 = [-17.2,-17.2,3.9];
 drop22 = [-15,-13.2,2.4];
 drop23 = [-17.8,-16.8,2.4];
 [drop21_deg,drop21_mid] = robotic_function.robot_pick_angle(drop21,-10,10);
@@ -175,9 +175,9 @@ drop23 = [-17.8,-16.8,2.4];
 [drop23_deg,drop23_mid] = robotic_function.robot_pick_angle(drop23,-20,5);
 drop24_deg = robotic_function.robot_angle(drop24,-10);
 
-pos2 = [-20.5,0.3,5.3];
+pos2 = [-20.5,0.3,6];
 [pick2_deg, pick2_mid] = robotic_function.robot_pick_angle(pos2,-90,3);
-%status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick2_mid, 0);
+status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick2_mid, 0);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick2_deg, 5);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick2_mid, 5);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop21_mid, 5);
@@ -189,11 +189,11 @@ status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop22_deg, 0);
 status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop21_mid, 0);
 
-pos3 = [-0.13,-20.3,5.3];
-drop31 = [-14,-14,4.7];
-drop34 = [-17.2,-17.2,3.5];
-drop32 = [-15,-13.2,3.5];
-drop33 = [-17.8,-16.8,3.5];
+pos3 = [-0.13,-20.3,6.5];
+drop31 = [-14,-14,6.5];
+drop34 = [-17.2,-17.2,5];
+drop32 = [-15,-13.2,5];
+drop33 = [-17.8,-16.8,5];
 
 [pick3_deg, pick3_mid] = robotic_function.robot_pick_angle(pos3,-90,3);
 [drop31_deg,drop31_mid] = robotic_function.robot_pick_angle(drop31,-10,10);
@@ -250,107 +250,6 @@ status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_P
 status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_deg, 6);
 status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 6);
 status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, drop_mid, 0);
-
-
-
-
-%% Sweep
-% centre = [15,16,8];
-% r = 10;
-% angle = 150;
-% tf = 6;
-% t = 0:1:tf;
-% pos_pick = [-22.3,2.4,6.1];
-% [pick_deg,pick_mid] = robotic_function.robot_pick_angle(pos_pick,0,10);
-% % status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 0);
-% % status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_deg, 1);
-% % status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 1);
-% angle = robotic_function.robot_sweep(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, centre,r,angle,t,tf);
-%% Angry
-% %angry book
-% pos1 = [-12.3,-12.5,3.8];
-% drop11 = [-15.2,-15.2,3.1];
-% drop14 = [-16.9,-16.9,2.6];
-% drop12 = [-16.2,-14.4,0.8];
-% drop13 = [-17.8,-16.8,0.8];
-% 
-% [pick1_deg, pick1_mid] = robotic_function.robot_pick_angle(pos1,-90,3);
-% [drop11_deg,drop11_mid] = robotic_function.robot_pick_angle(drop11,-10,10);
-% [drop12_deg,drop12_mid] = robotic_function.robot_pick_angle(drop12,-20,5);
-% [drop13_deg,drop13_mid] = robotic_function.robot_pick_angle(drop13,-20,5);
-% drop14_deg = robotic_function.robot_angle(drop14,-10);
-% speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,600,300);
-% status1 = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick1_mid, 0);
-% status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick1_deg, 5);
-% status1 = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick1_mid, 5);
-% 
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, 135/0.088);
-% pause(0.05)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 135/0.088);
-% pause(1)
-% % Angry water mode
-% speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,1000,900);
-% pos1 = [0,-19.5,6.25];
-% [water_deg, water_mid] = robotic_function.robot_pick_angle(pos1,0,9);
-% pos_smash = [-18,0,13];
-% smash_deg = robotic_function.robot_angle(pos_smash,0);
-% pos2 = [-9.5,20.5,5.6];
-% [plant_deg1,plant_mid1] = robotic_function.robot_pick_angle(pos2,-80,2);
-% pos3 = [-7.7,13,15];
-% plant_deg2 = robotic_function.robot_angle(pos3,0);
-% pour_deg1 = robotic_function.robot_angle(pos2,-30);
-% pour_deg2 = robotic_function.robot_angle(pos2,-50);
-% status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, plant_mid1, 0);
-% status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, plant_deg1, 4);
-% status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, plant_deg2, 4);
-% status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, water_mid, 0);
-% 
-% %Angry Trash
-% speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,600,300);
-% pos_pick = [-13.1,7,1.85];
-% [pick_deg, pick_mid] = robotic_function.robot_pick_angle(pos_pick,-85,8);
-% %high up, crawl together
-% pos_ready = [-2,12.6,30];
-% % another 2 angles or ratating and pretend to aim
-% pos_aim1 = [3,13,30];
-% pos_aim2 = [-6,7.3,32.3];
-% %extend with a phi of 30
-% pos_throw = [-21,-7.9,37.3];
-% ready_deg = robotic_function.robot_angle(pos_ready,90);
-% aim_deg1 = robotic_function.robot_angle(pos_aim1,90);
-% aim_deg2 = robotic_function.robot_angle(pos_aim2,90);
-% throw_deg = robotic_function.robot_angle(pos_throw,50);
-% 
-% status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 0);
-% status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_deg, 6);
-% status = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pick_mid, 6);
-% 
-% %pick
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, ready_deg(1));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, ready_deg(2));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, ready_deg(3));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, ready_deg(4));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 194/0.088);
-% pause(3)
-% %"aim"
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, aim_deg1(1));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, aim_deg1(2));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, aim_deg1(3));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, aim_deg1(4));
-% pause(2)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, aim_deg2(1));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, aim_deg2(2));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, aim_deg2(3));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, aim_deg2(4));
-% pause(3)
-% speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,300,100);
-% %throw
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 11, ADDR_PRO_GOAL_POSITION, throw_deg(1));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 12, ADDR_PRO_GOAL_POSITION, throw_deg(2));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 13, ADDR_PRO_GOAL_POSITION, throw_deg(3));
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 14, ADDR_PRO_GOAL_POSITION, throw_deg(4));
-% pause(0.03)
-% write4ByteTxRx(port_num, PROTOCOL_VERSION, 15, ADDR_PRO_GOAL_POSITION, 135/0.088);
 %% Default
 cube = robotic_function.robot_draw(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS, 0);
 

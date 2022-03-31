@@ -123,7 +123,7 @@ mode = robotic_function.operating_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_OPER
 mode = robotic_function.drive_mode(port_num, PROTOCOL_VERSION, ADDR_PRO_DRIVE_MODE,4);
 pause(0.5)
 % set Profile Velocity
-speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,1600,1200);
+speed = robotic_function.profile_velocity(port_num,PROTOCOL_VERSION,ADDR_PRO_PROFILE_VELOCITY,900,600);
 %Enable Torque
 torque_enable = robotic_function.torque(port_num, PROTOCOL_VERSION, ADDR_PRO_TORQUE_ENABLE,1);
 
@@ -154,21 +154,18 @@ end
 %first cube pos
 %% Need to measure location again, it is off
 pos1 = [-17.3,17.7,6.1];
-pos2 = [-17.5,-5,5.4];
+pos2 = [-17.5,-5,5.8];
 %pos1_2 = [-22.2,0,8];
 %second cube pos
-pos3 = [0,17.5,6.3];
-pos4 = [0,-15,5.5];
-%third cube pos
-pos5 = [-10, 0,5.6];
-pos6 = [-22.5,0,4.9];
+pos3 = [0,17.5,5.6];
+
 phi = -80;
 %% Pick up all cubes and place them
 %First
 %% Normal Operation with linear velocity
-%status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos1,1,0,0,0,0,-80,3);
-status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2,5,0.4,0.7,1.5,-80,0,2);
-status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos3,3,0,-0.5,0.7,-80,0,1);
+status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos1,3,-0.3,0.3,0,0,-60,3);
+status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos2,5,0.8,0.3,1.2,-80,0,2);
+status = robotic_function.robot_rotate(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, pos3,3,0,-0.9,1.4,-80,0,1);
 % default = robotic_function.robot_pick(port_num, PROTOCOL_VERSION, ADDR_PRO_GOAL_POSITION, DEFAULT_POS,0);
 %% 
 % % trajectory trial
